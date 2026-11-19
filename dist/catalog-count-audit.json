@@ -1,0 +1,65 @@
+{
+  "checkedDate": "2026-11-17",
+  "planetarySource": "https://ssd.jpl.nasa.gov/sats/discovery.html",
+  "smallBodySource": "https://ssd-api.jpl.nasa.gov/sb_sat.api",
+  "apiDocumentation": "https://ssd-api.jpl.nasa.gov/doc/sb_sat.html",
+  "counts": {
+    "mercury": 0,
+    "venus": 0,
+    "earth": 1,
+    "mars": 2,
+    "jupiter": 115,
+    "saturn": 293,
+    "uranus": 29,
+    "neptune": 16,
+    "pluto": 5
+  },
+  "comparisons": {
+    "mars": {
+      "jpl": 2,
+      "local": 2,
+      "missing": [],
+      "extra": []
+    },
+    "jupiter": {
+      "jpl": 115,
+      "local": 115,
+      "missing": [],
+      "extra": []
+    },
+    "saturn": {
+      "jpl": 293,
+      "local": 293,
+      "missing": [],
+      "extra": []
+    },
+    "uranus": {
+      "jpl": 29,
+      "local": 29,
+      "missing": [],
+      "extra": []
+    },
+    "neptune": {
+      "jpl": 16,
+      "local": 16,
+      "missing": [],
+      "extra": []
+    }
+  },
+  "smallBody": {
+    "total": 537,
+    "confirmed": 499,
+    "unconfirmed": 38,
+    "includesPluto": true
+  },
+  "eightPlanetTotal": 456,
+  "combinedJplConfirmed": 955,
+  "combinedJplIncludingCandidates": 993,
+  "limitations": [
+    "Current app includes all 456 satellites of the eight planets in the checked JPL snapshot, including recognized provisional designations. A provisional designation does not mean unconfirmed.",
+    "The 461 figure is 456 plus Pluto five; it is not an updated eight-planet total.",
+    "All Solar System moons is a broader scope: dwarf planets, asteroids, TNOs and candidate binaries. JPL small-body API is one source snapshot and not guaranteed to incorporate every newest worldwide announcement.",
+    "For the combined count use456+499=955, not461+499, because Pluto appears in both JPL lists.",
+    "The 38 small-body candidate satellites must remain explicitly unconfirmed, not silently counted as confirmed moons."
+  ]
+}

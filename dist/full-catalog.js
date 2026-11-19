@@ -1,0 +1,16 @@
+export async function mountFullCatalog(onSelect){
+ const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const dialog=document.createElement('dialog');dialog.className='full-catalog';dialog.innerHTML='<button class="catalog-close" aria-label="Закрыть каталог">×</button><p class="latin">ПРОВЕРКА ЧИСЛЕННОСТИ · JPL</p><h2>Спутники Солнечной системы</h2><p id="catalog-summary"></p><p class="fine">Снимок каталогов на 17.11.2026. Сведения о подтверждении относятся к статусу JPL. Число записей в этих каталогах не гарантирует охват всех последних публикаций.</p><input type="search" id="full-search" placeholder="Название спутника или родительского тела" aria-label="Поиск по полному каталогу"><label class="maps-filter"><input type="checkbox" id="catalog-candidates">Показать также неподтверждённых кандидатов</label><p class="fine">Нейтральная модель означает отсутствие подключённой фотокарты. Форма, размер и орбита таких объектов не восстанавливаются произвольно.</p><div id="catalog-results"></div><a class="source" href="https://ssd.jpl.nasa.gov/sb/sats.html" target="_blank" rel="noreferrer">Каталог спутников малых тел · JPL ↗</a>';document.body.append(dialog);
+ const button=document.createElement('button');button.className='overview';button.id='full-catalog-open';button.textContent='◌ Полный каталог спутников';document.querySelector('#overview').after(button);
+ button.onclick=()=>dialog.showModal();dialog.querySelector('.catalog-close').onclick=()=>dialog.close();
+ try{
+ const [planetary,extra]=await Promise.all([fetch('./moons-catalog.json').then(r=>r.json()),fetch('./supplemental-moons.json').then(r=>r.json())]);
+ const parents={earth:'Земля',mars:'Марс',jupiter:'Юпитер',saturn:'Сатурн',uranus:'Уран',neptune:'Нептун'};
+ const main=Object.entries(planetary.planets).flatMap(([id,rows])=>rows.map(m=>({name:m.ru||m.name||m.designation,key:m.name||m.designation,parent:parents[id]||id,planet:id,confirmed:true})));
+ const rows=[...main,...extra.objects];
+ dialog.querySelector('#catalog-summary').textContent=`${main.length} у восьми планет + ${extra.objects.filter(x=>x.confirmed).length} у малых тел и карликовых планет. Отдельно ${extra.objects.filter(x=>!x.confirmed).length} кандидатов.`;
+ const search=dialog.querySelector('#full-search'),candidates=dialog.querySelector('#catalog-candidates'),results=dialog.querySelector('#catalog-results');
+ function render(){const q=search.value.trim().toLocaleLowerCase('ru');const found=rows.filter(r=>(r.confirmed||candidates.checked)&&(r.name+' '+r.parent+' '+(r.key||'')).toLocaleLowerCase('ru').includes(q));results.innerHTML='<p class="fine">Найдено: '+found.length+'</p>'+found.map((r,i)=>'<button class="catalog-row" data-row="'+i+'"><span>'+escape(r.name)+'</span><small>'+escape(r.parent)+(r.confirmed?'':' · кандидат')+'</small><span>↗</span></button>').join('');results.querySelectorAll('button').forEach(b=>b.onclick=()=>{dialog.close();onSelect(found[+b.dataset.row]);});}
+ search.oninput=render;candidates.onchange=render;render();
+ }catch{dialog.querySelector('#catalog-summary').textContent='Не удалось загрузить полный каталог. Обновите страницу.';}
+}

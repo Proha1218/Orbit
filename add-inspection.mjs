@@ -1,0 +1,17 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+let s=readFileSync('dist/app.js','utf8');
+s=s.replace("import {MOON_MAPS,partialCoverage,phoebeMosaic} from './moon-maps.js';","import {MOON_MAPS,partialCoverage,phoebeMosaic} from './moon-maps.js';\nimport {installInspectionLight} from './inspection-light.js';\nimport {sunMaterial} from './sun-material.js';\nconst inspectionLight={value:0};");
+s=s.replace("new THREE.MeshBasicMaterial({map:texture('sun')})","sunMaterial(texture('sun'))");
+s=s.replace('glow.scale.setScalar(realScale?.5:42);','glow.scale.setScalar(realScale?.22:23);glow.material.opacity=.32;');
+s=s.replace("function addScaleNote(){", "function addScaleNote(){installInspectionLight(focusGroup,inspectionLight);");
+s=s.replace("function title(eyebrow,heading,subtitle,badge){", "function title(eyebrow,heading,subtitle,badge){$('#illuminate').hidden=mode!=='planet';");
+s=s.replace("function bindUI(){", `function bindUI(){
+ $('#illuminate').onclick=()=>{inspectionLight.value=inspectionLight.value?0:1;$('#illuminate').setAttribute('aria-pressed',String(!!inspectionLight.value));$('#illuminate').textContent=inspectionLight.value?'◐ Обычный свет':'☀ Осветить';toast(inspectionLight.value?'Равномерная подсветка для осмотра':'Восстановлено сезонное освещение');};
+`);
+s=s.replace("$('#start-earth').onclick=()=>showPlanet('earth');", "$('#start-earth').onclick=()=>showPlanet('earth');const sunButton=document.createElement('button');sunButton.className='cta secondary-cta';sunButton.textContent='Рассмотреть Солнце ↗';sunButton.onclick=()=>{const radius=overviewGroup.userData.sun.geometry.parameters.radius;controls.minDistance=radius*1.2;fly(new THREE.Vector3(0,radius*.8,radius*4.4));};$('#start-earth').after(sunButton);");
+writeFileSync('dist/app.js',s);
+let h=readFileSync('dist/index.html','utf8');h=h.replace('<div class="view-tools">','<button id="illuminate" class="illuminate" aria-pressed="false" hidden>☀ Осветить</button><div class="view-tools">');
+h=h.replace('Кинорежим скрывает панели;', 'Кнопка «Осветить» включает равномерную подсветку поверхности выбранной планеты и её спутников, чтобы рассмотреть ночную сторону. Это режим осмотра, а не физическое освещение. Камера при переключении неподвижна. Кинорежим скрывает панели;');
+h=h.replace('Цвета и яркость служат наглядности.', 'Цвета и яркость служат наглядности. Солнце визуализируется в сдержанном светлом тоне с ослаблением яркости у края диска; исходный рисунок Solar System Scope перепроецирован без полярного растяжения. Это иллюстративная поверхность, а не карта текущей солнечной активности.');
+writeFileSync('dist/index.html',h);
+let css=readFileSync('dist/style.css','utf8');css+='\n.illuminate{position:absolute;top:145px;left:183px;z-index:2;font-size:10px;border:1px solid #efb28455;background:#1d2030ed;color:#efc49f;padding:8px 11px;border-radius:5px}.illuminate[hidden]{display:none}.illuminate[aria-pressed=true]{background:#e8b28b;color:#181d28}.secondary-cta{background:#15253a;color:#aec6e5;border:1px solid #8daed135;margin-top:9px}.secondary-cta:hover{background:#203550;color:#d9e8fc}.detail-hero.sun .planet-mini{filter:saturate(.2) brightness(.95);box-shadow:0 0 28px #fff1cb1c}.cinematic .illuminate{top:24px;left:24px}.cinematic .illuminate[hidden]{display:none}@media(max-width:600px){.illuminate{top:110px;left:160px;font-size:9px;padding:6px 9px}.cinematic .illuminate{top:20px;left:20px}}\n';writeFileSync('dist/style.css',css);

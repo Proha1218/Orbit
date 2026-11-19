@@ -1,0 +1,2857 @@
+{
+  "scope": "456 спутников из каталога приложения. Поиск по общим коллекциям JPL, USGS, PDS и NASA Trek; не индивидуальное доказательство отсутствия данных для каждого объекта.",
+  "retrievedDate": "2026-11-17",
+  "sources": [
+    "https://maps.jpl.nasa.gov/tmaps/",
+    "https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=icyMoon",
+    "https://data.caltech.edu/records/8q9an-yt176",
+    "https://sbnarchive.psi.edu/pds3/multi/MULTI-SA-MULTI-6-STOOKEMAPS-V3.0/",
+    "https://www.lpi.usra.edu/icy_moons/",
+    "https://svs.gsfc.nasa.gov/11533/"
+  ],
+  "mappedCount": 21,
+  "objects": [
+    {
+      "planet": "earth",
+      "name": "Moon",
+      "ru": "Луна",
+      "status": "connected_observation_map",
+      "source": "https://www.solarsystemscope.com/textures/",
+      "mission": "Лунная карта",
+      "note": "Обработанная карта из набора Solar System Scope, основанная на данных NASA.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "mars",
+      "name": "Phobos",
+      "ru": "Фобос",
+      "status": "connected_observation_map",
+      "source": "https://astrogeology.usgs.gov/search/map/phobos_viking_global_mosaic_5m",
+      "mission": "Viking",
+      "detailResolution": "8192×4096",
+      "note": "Подробная научная фотомозаика USGS. Разрешение исходных кадров и качество покрытия различаются по поверхности."
+    },
+    {
+      "planet": "mars",
+      "name": "Deimos",
+      "ru": "Деймос",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/mars.html",
+      "mission": "Viking",
+      "detailResolution": null
+    },
+    {
+      "planet": "jupiter",
+      "name": "Io",
+      "ru": "Ио",
+      "status": "connected_observation_map",
+      "source": "https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km",
+      "mission": "Voyager + Galileo",
+      "detailResolution": "8192×4096",
+      "note": "Подробная научная фотомозаика USGS. Разрешение исходных кадров и качество покрытия различаются по поверхности."
+    },
+    {
+      "planet": "jupiter",
+      "name": "Europa",
+      "ru": "Европа",
+      "status": "connected_observation_map",
+      "source": "https://astrogeology.usgs.gov/search/map/Europa/Voyager-Galileo/Europa_Voyager_GalileoSSI_global_mosaic_500m",
+      "mission": "Voyager + Galileo",
+      "detailResolution": "8192×4096",
+      "note": "Подробная научная фотомозаика USGS. Разрешение исходных кадров и качество покрытия различаются по поверхности."
+    },
+    {
+      "planet": "jupiter",
+      "name": "Ganymede",
+      "ru": "Ганимед",
+      "status": "connected_observation_map",
+      "source": "https://svs.gsfc.nasa.gov/11533/",
+      "mission": "Voyager + Galileo",
+      "note": "Глобальная фотомозаика, опубликованная NASA SVS. Геологическая карта с условной раскраской здесь не используется.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Callisto",
+      "ru": "Каллисто",
+      "status": "connected_observation_map",
+      "source": "https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km",
+      "mission": "Voyager + Galileo",
+      "detailResolution": "8192×4096",
+      "note": "Подробная научная фотомозаика USGS. Разрешение исходных кадров и качество покрытия различаются по поверхности."
+    },
+    {
+      "planet": "jupiter",
+      "name": "Amalthea",
+      "ru": "Амальтея",
+      "status": "located_map_is_drawing_excluded",
+      "searchEvidence": {
+        "body": "Amalthea",
+        "status": "shaded_relief_drawing_excluded",
+        "sourcePage": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/",
+        "directJpg": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/j5amalthea/amalcyl.jpg",
+        "sourceEvidence": "PDS explicitly describes these as shaded relief maps drawn by P. Stooke from Voyager images, then converted to simple cylindrical projection.",
+        "limitations": "A science-based drawing is not a real photographic surface map. It may be shown only with a reconstruction/relief-drawing label, never counted among real photo textures."
+      }
+    },
+    {
+      "planet": "jupiter",
+      "name": "Himalia",
+      "ru": "Гималия",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Elara",
+      "ru": "Элара",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Pasiphae",
+      "ru": "Пасифе",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Sinope",
+      "ru": "Синопе",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Lysithea",
+      "ru": "Лиситея",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Carme",
+      "ru": "Карме",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Ananke",
+      "ru": "Ананке",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Leda",
+      "ru": "Леда",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Thebe",
+      "ru": "Фива",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Adrastea",
+      "ru": "Адрастея",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Metis",
+      "ru": "Метида",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Callirrhoe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Themisto",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Megaclite",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Taygete",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Chaldene",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Harpalyke",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Kalyke",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Iocaste",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Erinome",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Isonoe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Praxidike",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Autonoe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Thyone",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Hermippe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Aitne",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Eurydome",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Euanthe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Euporie",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Orthosie",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Sponde",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Kale",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Pasithee",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Hegemone",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Mneme",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Aoede",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Thelxinoe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Arche",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Kallichore",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Helike",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Carpo",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Eukelade",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Cyllene",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Kore",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Herse",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Dia",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2016 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Eirene",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Philophrosyne",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Eupheme",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J19",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Valetudo",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Pandia",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "Ersa",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J23",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2003 J24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2010 J6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2011 J6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2016 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2016 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J14",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J15",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2017 J18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2018 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2018 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2018 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2018 J5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2021 J8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2022 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2022 J2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2022 J3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "jupiter",
+      "name": "S/2024 J1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Mimas",
+      "ru": "Мимас",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/mimas/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "6356×3178"
+    },
+    {
+      "planet": "saturn",
+      "name": "Enceladus",
+      "ru": "Энцелад",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/enceladus/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "saturn",
+      "name": "Tethys",
+      "ru": "Тефия",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/tethys/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "saturn",
+      "name": "Dione",
+      "ru": "Диона",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/dione/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "saturn",
+      "name": "Rhea",
+      "ru": "Рея",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/rhea/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "saturn",
+      "name": "Titan",
+      "ru": "Титан",
+      "status": "connected_observation_map",
+      "source": "https://data.caltech.edu/records/8q9an-yt176",
+      "mission": "Cassini VIMS + ISS",
+      "note": "Инфракрасная мозаика Seignovert et al. (2019). Условные цвета спектральных отношений VIMS совмещены с картой ISS на 938 нм. Это не естественные цвета видимого света.",
+      "detailResolution": null
+    },
+    {
+      "planet": "saturn",
+      "name": "Hyperion",
+      "ru": "Гиперион",
+      "status": "located_map_is_drawing_excluded",
+      "searchEvidence": {
+        "body": "Hyperion",
+        "status": "shaded_relief_drawing_excluded",
+        "sourcePage": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/",
+        "directJpg": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/s7hyperion/hyrelcyl.jpg",
+        "sourceEvidence": "PDS explicitly describes shaded relief maps based on Voyager 2 images, with Thomas control. The NASA Hyperion PIA09215 color map is a local compositional VIMS map, about 75 km square, not a global natural-color map.",
+        "limitations": "Do not wrap PIA09215 or a disk photo onto a sphere as a real global texture. Hyperion tumbles; Cassini often imaged the same face, making global mapping difficult.",
+        "localCompositionMapSource": "https://www.jpl.nasa.gov/images/pia09215-hyperions-kaleidoscope-of-color/"
+      }
+    },
+    {
+      "planet": "saturn",
+      "name": "Iapetus",
+      "ru": "Япет",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/saturn/iapetus/",
+      "mission": "Cassini ISS",
+      "note": "Подробная фотомозаика LPI. Контраст и цветовые различия обработаны для различимости рельефа; освещение отдельных исходных кадров может быть заметно.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "saturn",
+      "name": "Phoebe",
+      "ru": "Феба",
+      "status": "connected_observation_map",
+      "source": "https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=icyMoon",
+      "mission": "Cassini",
+      "note": "Мозаика NASA Trek / DLR. Данные собраны из тайлов исходного слоя; подписи и координатная сетка не нанесены на поверхность.",
+      "detailResolution": null
+    },
+    {
+      "planet": "saturn",
+      "name": "Janus",
+      "ru": "Янус",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Epimetheus",
+      "ru": "Эпиметей",
+      "status": "photomosaic_identified_download_blocked",
+      "searchEvidence": {
+        "body": "Epimetheus",
+        "status": "confirmed_photomosaic_download_blocked",
+        "sourcePage": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/",
+        "directJpg": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_3_RDR_STOOKEMAPS_V1_0/maps/s11epi/epimos.jpg",
+        "projection": "Simple cylindrical, 10 pixels/degree",
+        "credit": "Philip Stooke; Voyager 1 and 2 images; positional control by Peter Thomas",
+        "sourceEvidence": "The PDS guide's Epimetheus section describes maps and mosaics from Voyager 1/2 with Thomas control and links epimos.jpg as Simple Cylindrical Projection. Other relief maps use an older, less reliable shape.",
+        "limitations": "Direct archive image requests return 403/Cloudflare challenge. No image downloaded, hence its precise coverage/no-data pattern was not visually verified. Do not substitute a relief drawing while labeling it a photo texture."
+      }
+    },
+    {
+      "planet": "saturn",
+      "name": "Helene",
+      "ru": "Елена",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Telesto",
+      "ru": "Телесто",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Calypso",
+      "ru": "Калипсо",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Atlas",
+      "ru": "Атлас",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Prometheus",
+      "ru": "Прометей",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Pandora",
+      "ru": "Пандора",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Pan",
+      "ru": "Пан",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Ymir",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Paaliaq",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Tarvos",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Ijiraq",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Suttungr",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Kiviuq",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Mundilfari",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Albiorix",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Skathi",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Erriapus",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Siarnaq",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Thrymr",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Narvi",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Methone",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Pallene",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Polydeuces",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Daphnis",
+      "ru": "Дафнис",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Aegir",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Bebhionn",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Bergelmir",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Bestla",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Farbauti",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Fenrir",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Fornjot",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Hati",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Hyrrokkin",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Kari",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Loge",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Skoll",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Surtur",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Anthe",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Jarnsaxa",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Greip",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Tarqeq",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Aegaeon",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Gridr",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Angrboda",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Skrymir",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Gerd",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S26",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Eggther",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S29",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Beli",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Gunnlod",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Thiazzi",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S34",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Alvaldi",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "Geirrod",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S21",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S28",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S31",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S36",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S37",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S39",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S40",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S41",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S42",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S43",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S44",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S45",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S46",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S47",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S48",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S49",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S50",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S51",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S52",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S53",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S54",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S55",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S56",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S57",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S58",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S59",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S60",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2004 S61",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2005 S4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2005 S5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2005 S6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2005 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S14",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S15",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S19",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S20",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S21",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S22",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S23",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S25",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S26",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S27",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S28",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2006 S29",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2007 S11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2009 S1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2009 S2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S14",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S15",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S19",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S20",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S21",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S22",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S23",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S25",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S26",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S27",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S28",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S29",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S30",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S31",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S32",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S33",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S34",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S35",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S36",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S37",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S38",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S39",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S40",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S41",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S42",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S43",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2019 S44",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S14",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S15",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S19",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S20",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S21",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S22",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S23",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S25",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S26",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S27",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S28",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S29",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S30",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S31",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S32",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S33",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S34",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S35",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S36",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S37",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S38",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S39",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S40",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S41",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S42",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S43",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S44",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S45",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S46",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S47",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S48",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2020 S49",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S2",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S3",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S4",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S6",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S7",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S8",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S9",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S10",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S11",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S12",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S13",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S14",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S15",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S16",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S17",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S18",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S19",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S20",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S21",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S22",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S23",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S24",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S25",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S26",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S27",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S28",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S29",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S30",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S31",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S32",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S33",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S34",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S35",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S36",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S37",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S38",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S39",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S40",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S41",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S42",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S43",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S44",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S45",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S46",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S47",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S48",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S49",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S50",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S51",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S52",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S53",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S54",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S55",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S56",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S57",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S58",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S59",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S60",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S61",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S62",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "saturn",
+      "name": "S/2023 S63",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Ariel",
+      "ru": "Ариэль",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/uranus.html",
+      "mission": "Voyager 2",
+      "detailResolution": null
+    },
+    {
+      "planet": "uranus",
+      "name": "Umbriel",
+      "ru": "Умбриэль",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/uranus.html",
+      "mission": "Voyager 2",
+      "detailResolution": null
+    },
+    {
+      "planet": "uranus",
+      "name": "Titania",
+      "ru": "Титания",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/uranus.html",
+      "mission": "Voyager 2",
+      "detailResolution": null
+    },
+    {
+      "planet": "uranus",
+      "name": "Oberon",
+      "ru": "Оберон",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/uranus.html",
+      "mission": "Voyager 2",
+      "detailResolution": null
+    },
+    {
+      "planet": "uranus",
+      "name": "Miranda",
+      "ru": "Миранда",
+      "status": "connected_observation_map",
+      "source": "https://maps.jpl.nasa.gov/tmaps/uranus.html",
+      "mission": "Voyager 2",
+      "detailResolution": null
+    },
+    {
+      "planet": "uranus",
+      "name": "Cordelia",
+      "ru": "Корделия",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Ophelia",
+      "ru": "Офелия",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Bianca",
+      "ru": "Бианка",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Cressida",
+      "ru": "Крессида",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Desdemona",
+      "ru": "Дездемона",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Juliet",
+      "ru": "Джульетта",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Portia",
+      "ru": "Порция",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Rosalind",
+      "ru": "Розалинда",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Belinda",
+      "ru": "Белинда",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Puck",
+      "ru": "Пак",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Caliban",
+      "ru": "Калибан",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Sycorax",
+      "ru": "Сикоракса",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Prospero",
+      "ru": "Просперо",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Setebos",
+      "ru": "Сетебос",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Stephano",
+      "ru": "Стефано",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Trinculo",
+      "ru": "Тринкуло",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Francisco",
+      "ru": "Франциско",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Margaret",
+      "ru": "Маргарита",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Ferdinand",
+      "ru": "Фердинанд",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Perdita",
+      "ru": "Пердита",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Mab",
+      "ru": "Маб",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "Cupid",
+      "ru": "Купидон",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "S/2025 U1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "uranus",
+      "name": "S/2023 U1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Triton",
+      "ru": "Тритон",
+      "status": "connected_observation_map",
+      "source": "https://www.lpi.usra.edu/icy_moons/neptune/triton/",
+      "mission": "Voyager 2 · мозаика 2014",
+      "note": "Трёхцветная фотомозаика с приблизительно естественными цветами. Неосвещённая во время пролёта северная область остаётся без данных.",
+      "detailResolution": "8192×4096"
+    },
+    {
+      "planet": "neptune",
+      "name": "Nereid",
+      "ru": "Нереида",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Naiad",
+      "ru": "Наяда",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Thalassa",
+      "ru": "Таласса",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Despina",
+      "ru": "Деспина",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Galatea",
+      "ru": "Галатея",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Larissa",
+      "ru": "Ларисса",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Proteus",
+      "ru": "Протей",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Halimede",
+      "ru": "Галимеда",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Psamathe",
+      "ru": "Псамафа",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Sao",
+      "ru": "Сао",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Laomedeia",
+      "ru": "Лаомедея",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Neso",
+      "ru": "Несо",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "Hippocamp",
+      "ru": "Гиппокамп",
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "S/2002 N5",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    },
+    {
+      "planet": "neptune",
+      "name": "S/2021 N1",
+      "ru": null,
+      "status": "no_suitable_map_obtained_in_reviewed_collections"
+    }
+  ],
+  "hdCount": 13
+}

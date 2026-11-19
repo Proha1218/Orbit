@@ -1,0 +1,15 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+let s=readFileSync('dist/app.js','utf8');
+s=s.replace('speed = 10, simDays','speed = .01, simDays').replace('clockSpeeds = [1,10,100,1000]','clockSpeeds = [.01,.03,.1,.3,1,3,10]');
+s=s.replace('simDays+=delta*speed;planetObjects','simDays+=delta*speed;const visualDelta=delta*Math.sqrt(speed);planetObjects');
+s=s.replaceAll('rotation.y+=delta*.','rotation.y+=visualDelta*.');
+writeFileSync('dist/app.js',s);
+let v=readFileSync('dist/visuals.js','utf8');
+v=v.replace('MeshStandardMaterial({map,transparent:true,side:THREE.DoubleSide,roughness:1,depthWrite:false,alphaTest:.01})','MeshStandardMaterial({map,emissiveMap:map,emissive:0xc8bfad,emissiveIntensity:.35,transparent:true,side:THREE.DoubleSide,roughness:1,depthWrite:false,alphaTest:.01})');
+writeFileSync('dist/visuals.js',v);
+let h=readFileSync('dist/index.html','utf8');
+h=h.replace('type="range" min="0" max="3" step="1" value="1"','type="range" min="0" max="6" step="1" value="0"');
+h=h.replace('<output id="speed-label">10×</output>','<output id="speed-label">0,01×</output>');
+h=h.replace('1× означает один модельный день в секунду.','1× означает один модельный день в секунду. Начальная скорость — 0,01× (14,4 модельной минуты в секунду). Диапазон — от 0,01× до 10×. Вращение поверхностей и поясов также замедляется при уменьшении скорости.');
+h=h.replace('Цвета и яркость служат наглядности.','Цвета и яркость служат наглядности. Кольца Сатурна дополнены мягкой подсветкой для различимости в тени и при освещении с ребра; она не является физическим свечением колец.');
+writeFileSync('dist/index.html',h);
