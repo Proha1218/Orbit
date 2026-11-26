@@ -1,6 +1,50 @@
+import {createReadStream} from 'node:fs';
+import {stat} from 'node:fs/promises';
 import {createServer} from 'node:http';
-import {readFile} from 'node:fs/promises';
-import {resolve,extname,sep} from 'node:path';
-const root=resolve('dist');
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.jpg':'image/jpeg','.txt':'text/plain; charset=utf-8'};
-createServer(async(req,res)=>{try{const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const path=resolve(root,'.'+(pathname==='/'?'/index.html':pathname));if(!path.startsWith(root+sep)){res.writeHead(403);res.end();return;}const data=await readFile(path);res.writeHead(200,{'content-type':types[extname(path)]||'application/octet-stream','cache-control':'no-cache'});res.end(data);}catch{res.writeHead(404);res.end('Not found');}}).listen(4173,'127.0.0.1',()=>console.log('Local: http://127.0.0.1:4173'));
+import {extname,resolve,sep} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const root=fileURLToPath(new URL('./dist',import.meta.url));
+const port=Number(process.env.ORBITA_PORT??4173);
+const types={
+ '.html':'text/html; charset=utf-8',
+ '.js':'text/javascript; charset=utf-8',
+ '.css':'text/css; charset=utf-8',
+ '.json':'application/json; charset=utf-8',
+ '.jpg':'image/jpeg',
+ '.png':'image/png',
+ '.glb':'model/gltf-binary',
+ '.bin':'application/octet-stream',
+ '.txt':'text/plain; charset=utf-8'
+};
+
+createServer(async(req,res)=>{
+ try{
+  if(req.method!=='GET'&&req.method!=='HEAD'){
+   res.writeHead(405,{Allow:'GET, HEAD'}).end();
+   return;
+  }
+  const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
+  const path=resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
+  if(!path.startsWith(root+sep)){
+   res.writeHead(403).end();
+   return;
+  }
+  const entry=await stat(path);
+  if(!entry.isFile()){
+   res.writeHead(404).end();
+   return;
+  }
+  res.writeHead(200,{
+   'content-type':types[extname(path)]??'application/octet-stream',
+   'content-length':entry.size,
+   'cache-control':'no-cache'
+  });
+  if(req.method==='HEAD'){res.end();return;}
+  const stream=createReadStream(path);
+  res.once('close',()=>stream.destroy());
+  stream.on('error',()=>res.destroy()).pipe(res);
+ }catch{
+  res.writeHead(404).end();
+ }
+}).listen(port,'127.0.0.1',()=>console.log('ОРБИТА: http://127.0.0.1:'+port+'/'));

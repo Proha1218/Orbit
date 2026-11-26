@@ -1,0 +1,201 @@
+.spacecraft-icon{flex:none;display:grid;place-items:center;width:25px;color:#eeb582;font-size:20px}
+.spacecraft-dialog{
+ width:min(1080px,calc(100% - 40px));max-width:none;max-height:calc(100dvh - 40px);
+ margin:auto;box-sizing:border-box;padding:clamp(14px,2.4vw,28px);overflow:auto;
+ color:#e7eef9;background:#0e1725;border:1px solid #35465c;border-radius:16px;
+ color-scheme:dark;overscroll-behavior:contain
+}
+.spacecraft-dialog::backdrop{background:#060a12df}
+.spacecraft-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.spacecraft-header h2{font-size:clamp(25px,4vw,39px);margin:4px 0 0;line-height:1.1}
+.spacecraft-header .eyebrow{color:#efb588}
+.spacecraft-dialog button{
+ min-height:40px;padding:7px 12px;border:1px solid #455973;border-radius:8px;
+ background:#18283d;color:#eaf2fc;font:inherit;font-size:13px;cursor:pointer
+}
+.spacecraft-dialog button:hover,.spacecraft-dialog button[aria-pressed=true]{background:#263d58;border-color:#eeb582}
+.spacecraft-dialog button:focus-visible,.spacecraft-dialog a:focus-visible{outline:2px solid #ffbf8c;outline-offset:2px}
+.spacecraft-dialog button:disabled{opacity:.52;cursor:default}
+.spacecraft-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:20px;align-items:start}
+.spacecraft-view{position:relative;width:100%;height:clamp(310px,53dvh,590px);overflow:hidden;border:1px solid #293a50;border-radius:12px;background:#080e19}
+.spacecraft-view canvas{display:block;width:100%;height:100%;touch-action:none}
+.spacecraft-message{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;gap:12px;text-align:center;padding:15px;color:#e5edf7;background:#080e19}
+.spacecraft-message[hidden],.spacecraft-dialog button[hidden]{display:none}
+.spacecraft-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.spacecraft-actions button:first-child,.spacecraft-actions button:nth-child(2){min-width:42px;font-size:18px}
+.spacecraft-help,.spacecraft-credit{font-size:12px;line-height:1.5;color:#b6c6dd;margin:7px 0 0}
+.spacecraft-dialog a{color:#a9d1ff}
+.spacecraft-info{min-width:0;font-size:14px;line-height:1.55}
+.spacecraft-info p{margin:0 0 14px}
+.spacecraft-info h3{margin:16px 0 4px;font-size:15px;color:#efb588}
+.spacecraft-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.spacecraft-facts div{padding:8px;background:#162235;border-radius:7px}
+.spacecraft-facts dt{font-size:12px;color:#b6c6dd}
+.spacecraft-facts dd{margin:2px 0 0;font-weight:650}
+.spacecraft-info ul{margin:6px 0 0;padding-left:19px}
+@media(max-width:760px){
+ .spacecraft-dialog{width:calc(100% - 16px);max-height:calc(100dvh - 16px);padding:12px}
+ .spacecraft-header{margin-bottom:10px}
+ .spacecraft-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+ .spacecraft-view{height:clamp(190px,39dvh,410px)}
+}
+@media(max-width:600px){
+ .spacecraft-nav .belt-button{width:100%;justify-content:flex-start;min-height:44px}
+ .spacecraft-nav .spacecraft-icon{font-size:17px}
+}
+/* Technical atlas and historical flight */
+.spacecraft-dialog{width:min(1330px,calc(100% - 32px))}
+.spacecraft-header-actions,.spacecraft-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.spacecraft-tabs{padding-bottom:10px;margin-bottom:14px;border-bottom:1px solid #344358}
+.spacecraft-tabs button[aria-pressed=true]{color:#ffd2a9}
+.spacecraft-grid{grid-template-columns:minmax(0,1.75fr) minmax(245px,1fr)}
+.spacecraft-view{height:clamp(275px,59dvh,680px);background:radial-gradient(ellipse at center,#152033,#080e19 72%)}
+.spacecraft-header{margin-bottom:12px}
+.spacecraft-dialog[open] [hidden],.flight-ui [hidden]{display:none!important}
+.spacecraft-markers,.flight-labels{position:absolute;inset:0;pointer-events:none}
+.spacecraft-markers button,.flight-labels button{position:absolute;pointer-events:auto;transform:translate(-50%,-50%)}
+.spacecraft-markers button{font-size:11px;min-height:29px;padding:3px 7px;background:#18324aed;white-space:nowrap}
+.spacecraft-markers button::before{content:'◆';margin-right:4px;color:#ffbc87}
+.part-select,.mission-history label{display:grid;gap:5px}
+.spacecraft-dialog select,.flight-ui select,.flight-ui input[type=datetime-local]{
+ max-width:100%;min-width:0;color:#e7eef8;background:#18283d;border:1px solid #455973;border-radius:6px;
+ padding:7px;font:inherit;color-scheme:dark
+}
+.mission-history article{padding:13px 0;max-width:950px}
+.mission-history p,.mission-date-status{line-height:1.6}
+.mission-notice{margin:0 0 14px;color:#ffcb9d}
+.part-code{color:#91b0d6;font-size:12px}
+.mission-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:12px 0}
+.mission-gallery button{display:grid;gap:6px;align-content:start;text-align:left}
+.mission-gallery img{width:100%;height:88px;object-fit:contain;background:#090e19;border-radius:5px}
+.mission-archive summary{cursor:pointer;color:#adc8eb}
+.spacecraft-dialog:fullscreen,.spacecraft-dialog.mission-expanded,.mission-photo:fullscreen,.mission-photo.mission-expanded{
+ width:100%;height:100%;max-height:none;max-width:none;margin:0;border-radius:0
+}
+.mission-photo{
+ width:min(950px,calc(100% - 18px));max-width:none;max-height:calc(100dvh - 18px);margin:auto;overflow:auto;
+ padding:12px;color:#e7eef9;background:#121d2c;border:1px solid #35465c;border-radius:13px;color-scheme:dark
+}
+.mission-photo::backdrop{background:#070a11eb}
+.mission-photo header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mission-photo h2{margin:0 0 8px;font-size:19px}
+.mission-photo p{font-size:13px;line-height:1.55}
+.mission-photo a,.flight-telemetry a{color:#a9d1ff}
+.mission-photo button,.flight-ui button,.flight-loading button{
+ background:#18283d;color:#eaf2fc;border:1px solid #455973;border-radius:7px;
+ padding:7px 9px;min-height:34px;cursor:pointer;font:inherit
+}
+.mission-photo-viewport{overflow:auto;max-height:65dvh;overscroll-behavior:contain;background:#080e19;display:grid}
+.mission-photo-viewport img{display:block;max-width:100%;max-height:65dvh;object-fit:contain;margin:auto}
+.mission-photo-viewport img.zoomed{max-width:none;max-height:none}
+.flight-loading{position:absolute;z-index:20;inset:0;display:grid;place-content:center;justify-items:center;background:#0b1321ec}
+.voyager-flight #stage>:not(#canvas-host):not(.flight-ui):not(.flight-loading){visibility:hidden}
+.voyager-flight #stage{background:radial-gradient(ellipse at 50% 45%,#0d192d,#090e18 80%)}
+@media(min-width:601px){
+ .voyager-flight .layout{grid-template-columns:clamp(160px,14vw,220px) minmax(0,1fr)}
+ .voyager-flight #details{display:none}
+}
+.voyager-flight [data-mobile-panel=tools],.voyager-flight [data-mobile-panel=details]{display:none}
+.flight-ui{position:absolute;inset:0;z-index:15;pointer-events:none;font-size:12px;color:#dce8f9}
+.flight-ui button,.flight-ui input,.flight-ui select,.flight-telemetry{pointer-events:auto}
+.flight-heading{
+ position:absolute;inset:14px 14px auto;display:flex;justify-content:space-between;align-items:flex-start;gap:8px
+}
+.flight-heading small{color:#ffbd89;font-size:10px;font-weight:700;letter-spacing:.04em}
+.flight-heading h1{font-size:clamp(22px,3vw,38px);line-height:1;margin:5px 0}
+.flight-exits{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}
+.flight-labels span{
+ position:absolute;transform:translate(7px,3px);font-size:10px;background:#0b1524bd;padding:2px 4px;
+ color:#afc5e2;border-radius:3px
+}
+.flight-labels .flight-probe{min-height:23px;padding:3px 5px;transform:translate(8px,-100%);color:#cdf3ff;white-space:nowrap}
+.flight-labels .flight-event{min-height:21px;padding:2px 4px;border:none;color:#fcbf90;background:#0b1524e0}
+.flight-dock{
+ position:absolute;bottom:12px;left:10px;right:10px;max-width:clamp(470px, 64%, 1000px);max-height:calc(100% - 78px);margin:auto;
+ display:flex;flex-direction:column;padding:10px 16px 8px;
+ border:1px solid #34465c;border-radius:11px;background:#111d2cf2;box-shadow:0 4px 16px #0004
+}
+.flight-dock > :not(.flight-telemetry){flex:none}
+.flight-readout{
+ display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 10px;
+ padding:2px 1px;color:#cadbf1;font-variant-numeric:tabular-nums
+}
+.flight-readout [data-velocity]{color:#f3bf94;font-weight:650;white-space:nowrap}
+.flight-clock button[aria-pressed=true]{border-color:#eeb582;color:#ffd2a9}
+.flight-clock [data-play]{min-width:90px}
+.flight-clock [data-back],.flight-clock [data-forward]{min-width:38px}
+.flight-clock label{margin-left:auto}
+.flight-clock select{min-height:34px}
+.flight-dock .flight-timeline{display:block;width:100%;height:28px;margin:4px 0 0;accent-color:#f0b585}
+.flight-actions,.flight-clock{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.flight-actions label,.flight-clock label{display:flex;align-items:center;gap:4px;color:#c7d8ed}
+.flight-dock select,.flight-telemetry select,.flight-telemetry input{font-size:11px;padding:5px}
+.flight-clock{margin-top:6px}
+.flight-dock p{margin:3px 0 0;color:#b5c9e4;line-height:1.35}
+.flight-telemetry{
+ min-height:0;max-height:min(38dvh, 300px);overflow:auto;overscroll-behavior:contain;
+ border-bottom:1px solid #344052;margin-bottom:5px
+}
+.flight-telemetry summary{position:sticky;top:0;z-index:1;padding:6px 0;background:#111d2c;font-weight:700;cursor:pointer}
+.flight-telemetry[open]{padding-bottom:6px}
+.flight-telemetry .flight-actions{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:6px 10px
+}
+.flight-telemetry .flight-actions label:not(.flight-toggle){display:grid;gap:3px;min-width:0}
+.flight-telemetry .flight-actions select,.flight-telemetry input[type=datetime-local]{width:100%;min-width:0}
+.flight-telemetry [data-replay],.flight-telemetry [data-all-time]{justify-self:start;text-align:left}
+.flight-telemetry dl{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:4px 10px;margin:8px 0
+}
+.flight-telemetry dl div{padding:4px 0;border-bottom:1px solid #344052}
+.flight-telemetry dt{color:#a6bad6;font-size:10px}
+.flight-telemetry dd{margin:0;line-height:1.35;font-weight:600;overflow-wrap:anywhere}
+@media(max-width:760px){
+ .spacecraft-dialog{width:calc(100% - 12px);max-height:calc(100dvh - 12px);padding:10px}
+ .spacecraft-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ .spacecraft-view{height:clamp(160px,39dvh,410px)}
+ .spacecraft-header-actions button,.spacecraft-tabs button{min-height:35px;padding:5px 7px;font-size:12px}
+ .spacecraft-tabs{gap:5px;margin-bottom:9px;padding-bottom:7px}
+}
+@media(max-width:600px){
+ .flight-heading{inset:6px 6px auto}
+ .flight-heading small{font-size:8px}
+ .flight-heading h1{font-size:20px}
+ .flight-ui button{min-height:28px;padding:4px;font-size:10px}
+ .flight-telemetry{font-size:11px;max-height:min(34dvh, 270px)}
+ .flight-dock{bottom:5px;left:5px;right:5px;max-height:calc(100% - 58px);padding:6px;font-size:11px}
+ .flight-clock button,.flight-clock select{min-height:42px;font-size:12px}
+ .flight-clock [data-play]{min-width:76px}
+ .flight-clock [data-back],.flight-clock [data-forward]{min-width:42px}
+ .flight-clock select{padding:4px;max-width:105px}
+ .flight-actions,.flight-clock{gap:4px}
+ .flight-dock p{font-size:9px}
+ .flight-labels .flight-probe{transform:translate(4px,-100%)}
+}
+
+.mission-history [data-history-card]>h3{font-size:clamp(22px,3vw,32px);margin:3px 0 12px}
+.mission-narrative{max-width:72ch;font-size:clamp(14px,1.4vw,16px);color:#d8e4f3}
+.mission-narrative p{margin:0 0 .8em}
+.mission-history [data-history-card] .mission-gallery{
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,205px),1fr));gap:12px;margin:16px 0
+}
+.mission-history [data-history-card] .mission-gallery button{padding:7px;min-width:0}
+.mission-history [data-history-card] .mission-gallery img{height:clamp(145px,24dvh,270px)}
+.mission-history [data-history-card] .mission-gallery span{padding:2px 4px 4px;line-height:1.35}
+@media(max-width:540px){
+ .mission-history [data-history-card] .mission-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .mission-history [data-history-card] .mission-gallery button:only-child{grid-column:1/-1}
+ .mission-history [data-history-card] .mission-gallery img{height:clamp(92px,23vw,126px)}
+ .mission-history [data-history-card] .mission-gallery button:only-child img{height:clamp(130px,45vw,195px)}
+}
+
+.iss-history-photo{margin:12px 0}.iss-history-photo img{display:block;max-width:100%;max-height:360px;object-fit:contain}.iss-history-photo figcaption{margin-top:6px;color:#b5c9e4}
+
+.iss-view-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.iss-view-tools button{min-height:32px}
+.iss-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:0 0 5px}
+.iss-metrics div{background:#0c1726;padding:5px;border-radius:4px}
+.iss-metrics dt{font-size:10px;color:#a9bdd8}
+.iss-metrics dd{margin:0;font-weight:650;font-variant-numeric:tabular-nums}
+@media(max-width:600px){.iss-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.iss-view-tools{gap:4px}.iss-view-tools button{min-height:32px}}
+.iss-trajectory-toggle{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;pointer-events:auto}

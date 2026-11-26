@@ -13,25 +13,6 @@ export function atmosphere(radius, color, lightDirection) {
   }));
 }
 
-export function saturnRings(radius) {
-  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1;
-  const ctx=canvas.getContext('2d');
-  for(let x=0;x<1024;x++){
-    const t=x/1023;const radial=1.24+t*(2.27-1.24);
-    const gap=(radial>1.95&&radial<2.03)||(radial>2.214&&radial<2.219);
-    const density=radial<1.527?.16:radial<1.95?.82:.48;
-    const grain=.73+.18*Math.sin(x*1.7)+.09*Math.sin(x*.29);
-    ctx.fillStyle=`rgba(${190+Math.round(25*Math.sin(t*6))},${177+Math.round(20*Math.sin(t*6))},${151+Math.round(18*Math.sin(t*6))},${gap?.015:density*grain})`;
-    ctx.fillRect(x,0,1,1);
-  }
-  const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
-  const inner=radius*1.24,outer=radius*2.27;
-  const geo=new THREE.RingGeometry(inner,outer,256,1),pos=geo.attributes.position,uv=geo.attributes.uv;
-  for(let i=0;i<pos.count;i++)uv.setXY(i,(Math.hypot(pos.getX(i),pos.getY(i))-inner)/(outer-inner),.5);
-  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map,emissiveMap:map,emissive:0xe5dece,emissiveIntensity:.65,transparent:true,side:THREE.DoubleSide,roughness:1,depthWrite:false,alphaTest:.01}));
-  mesh.rotation.x=-Math.PI/2;mesh.receiveShadow=true;return mesh;
-}
-
 // An illustrative relief map, never presented as a spacecraft image.
 const reliefCache=new Map();
 export function moonRelief(key,icy=false){

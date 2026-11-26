@@ -213,12 +213,45 @@ export const MOON_MAPS={
     "resolution": "11520×5760"
   }
 };
-export function partialCoverage(material){
- material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
-   float nodata=1.-step(.0001,max(diffuseColor.r,max(diffuseColor.g,diffuseColor.b)));
-
-   diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.085,.095,.11),nodata);`);};
- material.customProgramCacheKey=()=> 'observed-partial-coverage';
+export const coverageFill={value:1};
+export function partialCoverage(material,allowFill=false){
+ material.onBeforeCompile=shader=>{
+  shader.uniforms.coverageFill=allowFill?coverageFill:{value:0};
+  shader.fragmentShader='uniform float coverageFill;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+   float strength=max(diffuseColor.r,max(diffuseColor.g,diffuseColor.b));
+   float nodata=1.-smoothstep(.0004,.004,strength);
+   vec3 continuation=vec3(0.);float samples=0.;
+   for(int i=0;i<7;i++){
+    vec3 measured=texture2D(map,vec2((float(i)+.5)/7.,.12)).rgb;
+    float valid=step(.004,max(measured.r,max(measured.g,measured.b)));
+    continuation+=measured*valid;samples+=valid;
+   }
+   continuation=samples>0.?continuation/samples:vec3(.22);
+   if(coverageFill>.5){
+    float edge=.04;
+    for(int j=0;j<32;j++){
+     float latitude=.985-float(j)*.03;
+     vec3 candidate=texture2D(map,vec2(vMapUv.x,latitude)).rgb;
+     if(max(candidate.r,max(candidate.g,candidate.b))>.012){edge=latitude;break;}
+    }
+    vec3 nearby=vec3(0.);float weights=0.;
+    for(int j=0;j<9;j++){
+     vec3 candidate=texture2D(map,vec2(fract(vMapUv.x+(float(j)-4.)*.008),max(.015,edge-.04))).rgb;
+     float valid=step(.008,max(candidate.r,max(candidate.g,candidate.b)));
+     nearby+=candidate*valid;weights+=valid;
+    }
+    nearby=weights>0.?nearby/weights:continuation;
+    float polarFade=smoothstep(edge,1.,vMapUv.y);
+    vec3 filled=mix(nearby,continuation,polarFade);
+    float borderBlend=smoothstep(edge-.075,edge+.035,vMapUv.y);
+    diffuseColor.rgb=mix(diffuseColor.rgb,filled,borderBlend);
+    continuation=filled;
+   }
+   vec3 emptyColor=mix(vec3(.085,.095,.11),continuation,coverageFill);
+   diffuseColor.rgb=mix(diffuseColor.rgb,emptyColor,nodata);`);
+ };
+ material.customProgramCacheKey=()=> 'observed-partial-coverage-v2';
 }
 export function phoebeMosaic(){
  const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=1024;

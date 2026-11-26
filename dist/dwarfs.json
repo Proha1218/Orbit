@@ -1,0 +1,277 @@
+[
+  {
+    "id": "ceres",
+    "designation": "1",
+    "name": "Церера",
+    "ru": "Церера",
+    "diameterKm": 939.4,
+    "radiusKm": 469.7,
+    "diameterUncertaintyKm": 0.2,
+    "diameterType": "volume-equivalent",
+    "axesKm": [
+      964.4,
+      964.2,
+      891.8
+    ],
+    "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=1&phys-par=1",
+    "sizeReference": "Nature 537,515–517 (2016), as listed by JPL SBDB",
+    "solarOrbit": {
+      "aAu": 2.765552595034094,
+      "periodDays": 1679.853119758983,
+      "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=1&phys-par=1&full-prec=1",
+      "note": "Osculating orbital elements, not current display position."
+    },
+    "moons": [],
+    "description": "Карликовая планета главного пояса астероидов. Известных спутников нет."
+  },
+  {
+    "id": "pluto",
+    "designation": "134340",
+    "name": "Плутон",
+    "ru": "Плутон",
+    "diameterKm": 2376.6,
+    "radiusKm": 1188.3,
+    "diameterType": "mean",
+    "axesKm": null,
+    "source": "https://ssd.jpl.nasa.gov/planets/phys_par.html",
+    "solarOrbit": {
+      "aAu": 39.58862938517124,
+      "periodDays": 90981.71647718345,
+      "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=134340&phys-par=1&full-prec=1",
+      "note": "Osculating orbital elements, not current display position."
+    },
+    "moons": [
+      {
+        "name": "Харон",
+        "ru": "Харон",
+        "catalogId": "jpl-sb-1148dc51c749c1932b19",
+        "confirmed": true,
+        "radiusKm": 606,
+        "diameterKm": 1212,
+        "radiusUncertaintyKm": 0.5,
+        "sizeQuality": "JPL mean-radius estimate",
+        "sizeSource": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "aKm": 19600,
+        "periodDays": 6.387222,
+        "orbitSource": "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "notes": null,
+        "officialName": "Charon",
+        "key": "jpl-sb-1148dc51c749c1932b19"
+      },
+      {
+        "name": "Никта",
+        "ru": "Никта",
+        "catalogId": "jpl-sb-57b5c245479211fd5c82",
+        "confirmed": true,
+        "radiusKm": 18,
+        "diameterKm": 36,
+        "radiusUncertaintyKm": 1,
+        "sizeQuality": "JPL mean-radius estimate",
+        "sizeSource": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "aKm": 49300,
+        "periodDays": 24.85,
+        "orbitSource": "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "notes": null,
+        "officialName": "Nix",
+        "key": "jpl-sb-57b5c245479211fd5c82"
+      },
+      {
+        "name": "Гидра",
+        "ru": "Гидра",
+        "catalogId": "jpl-sb-3bfb0d50d025693e5d72",
+        "confirmed": true,
+        "radiusKm": 18.5,
+        "diameterKm": 37,
+        "radiusUncertaintyKm": 1,
+        "sizeQuality": "JPL mean-radius estimate",
+        "sizeSource": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "aKm": 65200,
+        "periodDays": 38.2,
+        "orbitSource": "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "notes": null,
+        "officialName": "Hydra",
+        "key": "jpl-sb-3bfb0d50d025693e5d72"
+      },
+      {
+        "name": "Кербер",
+        "ru": "Кербер",
+        "catalogId": "jpl-sb-9d4b1cbfc4db6d770062",
+        "confirmed": true,
+        "radiusKm": 6,
+        "diameterKm": 12,
+        "radiusUncertaintyKm": 1,
+        "sizeQuality": "JPL mean-radius estimate",
+        "sizeSource": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "aKm": 58300,
+        "periodDays": 32.17,
+        "orbitSource": "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "notes": null,
+        "officialName": "Kerberos",
+        "key": "jpl-sb-9d4b1cbfc4db6d770062"
+      },
+      {
+        "name": "Стикс",
+        "ru": "Стикс",
+        "catalogId": "jpl-sb-036c190e5f693524ea7d",
+        "confirmed": true,
+        "radiusKm": 5.2,
+        "diameterKm": 10.4,
+        "radiusUncertaintyKm": 1,
+        "sizeQuality": "JPL mean-radius estimate",
+        "sizeSource": "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "aKm": 43200,
+        "periodDays": 20.16,
+        "orbitSource": "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "notes": null,
+        "officialName": "Styx",
+        "key": "jpl-sb-036c190e5f693524ea7d"
+      }
+    ],
+    "description": "Карликовая планета внешней Солнечной системы."
+  },
+  {
+    "id": "haumea",
+    "designation": "136108",
+    "name": "Хаумеа",
+    "ru": "Хаумеа",
+    "diameterKm": 1595.2413150213188,
+    "radiusKm": 797.6206575106594,
+    "diameterType": "volume-equivalent calculated from occultation triaxial model",
+    "axesKm": [
+      2322,
+      1704,
+      1026
+    ],
+    "source": "https://doi.org/10.1051/0004-6361/202038812",
+    "sizeNote": "Triaxial ellipsoid from Ortiz et al.2017 as explicitly used by the primary dynamics paper cited. Equivalent sphere is calculated from semi-axes. NASA public fact1740km retained separately.",
+    "solarOrbit": {
+      "aAu": 43.06029023650952,
+      "periodDays": 103208.1173403618,
+      "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=136108&phys-par=1&full-prec=1",
+      "note": "Osculating orbital elements, not current display position."
+    },
+    "moons": [
+      {
+        "name": "Хииака",
+        "ru": "Хииака",
+        "catalogId": "jpl-sb-30d1da7fb33ad04cce3a",
+        "confirmed": true,
+        "radiusKm": null,
+        "diameterKm": null,
+        "radiusUncertaintyKm": null,
+        "sizeQuality": "unknown_not_verified",
+        "sizeSource": null,
+        "aKm": 49880,
+        "periodDays": 49.462,
+        "orbitSource": "https://doi.org/10.1088/0004-6256/137/6/4766",
+        "notes": null,
+        "officialName": "Hi'iaka",
+        "key": "jpl-sb-30d1da7fb33ad04cce3a"
+      },
+      {
+        "name": "Намака",
+        "ru": "Намака",
+        "catalogId": "jpl-sb-1b5354df2a67e2c5b35b",
+        "confirmed": true,
+        "radiusKm": null,
+        "diameterKm": null,
+        "radiusUncertaintyKm": null,
+        "sizeQuality": "unknown_not_verified",
+        "sizeSource": null,
+        "aKm": 25657,
+        "periodDays": 18.2783,
+        "orbitSource": "https://doi.org/10.1088/0004-6256/137/6/4766",
+        "notes": null,
+        "officialName": "Namaka",
+        "key": "jpl-sb-1b5354df2a67e2c5b35b"
+      }
+    ],
+    "publishedApproximateEquatorialDiameterKm": 1740,
+    "semiaxesKm": [
+      1161,
+      852,
+      513
+    ],
+    "semiaxesUncertaintyKm": [
+      30,
+      4,
+      16
+    ],
+    "originalShapeSource": "https://doi.org/10.1038/nature24051",
+    "description": "Карликовая планета внешней Солнечной системы."
+  },
+  {
+    "id": "makemake",
+    "designation": "136472",
+    "name": "Макемаке",
+    "ru": "Макемаке",
+    "diameterKm": 1430,
+    "radiusKm": 715,
+    "diameterType": "approximate",
+    "axesKm": null,
+    "source": "https://science.nasa.gov/dwarf-planets/makemake/",
+    "solarOrbit": {
+      "aAu": 45.57093317300052,
+      "periodDays": 112364.8068762869,
+      "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=136472&phys-par=1&full-prec=1",
+      "note": "Osculating orbital elements, not current display position."
+    },
+    "moons": [
+      {
+        "name": "S/2015 (136472) 1",
+        "ru": "S/2015 (136472) 1",
+        "catalogId": "jpl-sb-b4fb9128123b09a0ce2d",
+        "confirmed": true,
+        "radiusKm": 80.5,
+        "diameterKm": 161,
+        "radiusUncertaintyKm": null,
+        "sizeQuality": "NASA rough diameter estimate",
+        "sizeSource": "https://science.nasa.gov/image-detail/image1-_p1618aw/",
+        "aKm": null,
+        "periodDays": null,
+        "orbitSource": null,
+        "notes": "Published≈13000mile separation is projected separation, not verified semimajor axis.",
+        "officialName": "S/2015 (136472) 1",
+        "key": "jpl-sb-b4fb9128123b09a0ce2d"
+      }
+    ],
+    "description": "Карликовая планета внешней Солнечной системы."
+  },
+  {
+    "id": "eris",
+    "designation": "136199",
+    "name": "Эрида",
+    "ru": "Эрида",
+    "diameterKm": 2326,
+    "radiusKm": 1163,
+    "diameterType": "approximate equatorial",
+    "axesKm": null,
+    "source": "https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/",
+    "solarOrbit": {
+      "aAu": 67.93394687853566,
+      "periodDays": 204516.6629430732,
+      "source": "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=136199&phys-par=1&full-prec=1",
+      "note": "Osculating orbital elements, not current display position."
+    },
+    "moons": [
+      {
+        "name": "Дисномия",
+        "ru": "Дисномия",
+        "catalogId": "jpl-sb-1fd1670c4f1e952ac3d8",
+        "confirmed": true,
+        "radiusKm": null,
+        "diameterKm": null,
+        "radiusUncertaintyKm": null,
+        "sizeQuality": "unknown_not_verified",
+        "sizeSource": null,
+        "aKm": 37273,
+        "periodDays": 15.785899,
+        "orbitSource": "https://arxiv.org/abs/2009.13733",
+        "notes": null,
+        "officialName": "Dysnomia",
+        "key": "jpl-sb-1fd1670c4f1e952ac3d8"
+      }
+    ],
+    "description": "Карликовая планета внешней Солнечной системы."
+  }
+]

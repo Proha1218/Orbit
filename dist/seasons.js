@@ -7,9 +7,25 @@ export const SEASON_NOTES={
  mars:'Меняются освещение и условный размер полярных шапок: зимой шапка выбранного полушария расширяется, летом сокращается. Шапки — учебная модель; сезонных фотокарт здесь нет. Пыльные бури не предсказываются.',
  jupiter:'Из-за малого наклона оси сезонные различия слабые. Меняется направление света, но атмосферные полосы не перекрашиваются произвольно. Четыре сезонные фотокарты отсутствуют.',
  saturn:'Наклон оси меняет освещение полушарий и колец. В равноденствие свет падает почти вдоль плоскости колец, в солнцестояние — под большим углом. Карта облаков остаётся базовой.',
- uranus:'Большой наклон оси вызывает крайние сезоны: в солнцестояние одно полушарие получает свет почти со стороны полюса. Здесь моделируется освещение; сезонные изменения облаков не реконструированы.',
+ uranus:'Наклон оси создаёт крайние сезоны. Полярная дымка меняет яркость при приближении лета — эффект наблюдал Hubble. Здесь показана упрощённая модель этого эффекта; сила подсветления условна, это не четыре сезонные фотокарты.',
  neptune:'Наклон оси создаёт сезоны, продолжающиеся десятки земных лет. Здесь меняется освещение, а не создаются неподтверждённые карты облаков для каждого сезона.'
 };
+export function addUranusSeason(material){
+ const north={value:.18},south={value:.18};
+ const previous=material.onBeforeCompile;
+ material.onBeforeCompile=function(shader,renderer){
+  previous.call(this,shader,renderer);
+  shader.uniforms.hazeNorth=north;shader.uniforms.hazeSouth=south;
+  shader.vertexShader='varying float hazeLatitude;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nhazeLatitude=normalize(position).y;');
+  shader.fragmentShader='varying float hazeLatitude;uniform float hazeNorth;uniform float hazeSouth;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+   float haze=smoothstep(.52,.88,hazeLatitude)*hazeNorth+smoothstep(.52,.88,-hazeLatitude)*hazeSouth;
+   diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.81,.87,.84),haze);`);
+ };
+ material.customProgramCacheKey=()=> 'uranus-seasonal-polar-haze';
+ return {north,south};
+}
 export function addMarsSeason(material){
  const uniforms={north:{value:.91},south:{value:.91}};
  material.onBeforeCompile=shader=>{
