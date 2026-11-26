@@ -1,5 +1,7 @@
+import {modelLoadLabel,refreshModelProfile} from '../graphics.js';
 import * as T from '../vendor/three.module.js';
 import {OrbitControls} from '../vendor/OrbitControls.js';
+import {stationMin,stationMax,watchStationModel} from './station-lod.js';
 import {loadSpacecraftModel,disposeModel} from './viewer.js';
 import {makeFlightSky} from './flight-visuals.js';
 import {missionAtlas} from './bridge.js';
@@ -79,7 +81,7 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
  trajectory.checked=!follow;
  speed.value='30';
  let lastTick=performance.now();
- let time,direction=1,model,clock=0,lastRoute=-Infinity,needsFrame=true,closed=false,loading=false,nextFrame=0;
+ let time,direction=1,model,modelLoad,clock=0,lastRoute=-Infinity,needsFrame=true,closed=false,nextFrame=0;
  const materialColors=new Map();
  let previousShadow;
  const cameraFromEarth=new T.Vector3();
@@ -98,7 +100,11 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
   earth.traverse(node=>{node.geometry?.dispose();node.material?.dispose();});
   sky.geometry.dispose();sky.material.dispose();
   orbit.geometry.dispose();orbit.material.dispose();
-  marker.material.dispose();if(model)disposeModel(model);
+  marker.material.dispose();
+  if(model){craft.remove(model);disposeModel(model);model=null;}
+  materialColors.clear();
+  scene.clear();
+  renderer.renderLists.dispose();
   if(reopen)item.reopen(reopen);
  }
  function rebuild(t,period){
@@ -125,7 +131,7 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
   }
   controls.update();
  }
- const api={close,draw(dt){
+ const api={close,get label(){return 'МКС · '+(follow?'Сопровождение':'Траектория')+modelLoadLabel(modelLoad);},capped:true,draw(dt){
   const now=performance.now(),elapsed=(now-lastTick)/1000;lastTick=now;
   if(!atlas.paused){const next=time+elapsed*Number(speed.value)*direction;time=Math.min(data.max,Math.max(data.min,next));if(time!==next)atlas.pause(true);}
   const state=sampleOEM(data,time);
@@ -164,7 +170,7 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
   camera.aspect=width/height;
   camera.near=Math.max(.0000001,camera.position.distanceTo(controls.target)*.0003);camera.updateProjectionMatrix();
   orbit.visible=trajectory.checked;
-  if(performance.now()>=nextFrame){renderer.render(scene,camera);nextFrame=performance.now()+33;}
+  const rendered=now>=nextFrame;
   const label=$('[data-station]'),projected=temp.copy(craft.position).project(camera);
   const origin=camera.position.clone().sub(root.position);
   const ray=craft.position.clone().sub(camera.position);
@@ -177,7 +183,7 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
   const speedKm=Math.hypot(...state.velocity),r=Math.hypot(...state.p),a=1/(2/r-speedKm**2/398600.4418),period=2*Math.PI*Math.sqrt(a**3/398600.4418);
   if(Math.abs(time-lastRoute)>12){rebuild(time,period);lastRoute=time;}
   clock+=dt;
-  if(clock<.18)return;
+  if(clock>=.18){
   clock=0;slider.value=time;$('[data-clock]').textContent=utc(time);
   $('[data-velocity]').textContent='МКС · '+($('[data-scale]').value==='1'?'физический масштаб':'×'+$('[data-scale]').value);
   $('[data-play]').textContent=atlas.paused?'Продолжить':'Пауза';
@@ -188,12 +194,20 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
    const rows=[['Скорость',speedKm.toFixed(2)+' км/с'],['Высота',g.height.toFixed(1)+' км'],['Период (оценка)',(period/60).toFixed(2)+' мин'],['Наклонение',(Math.acos(normal.y)*180/Math.PI).toFixed(2)+'°'],['Широта',g.lat.toFixed(3)+'°'],['Долгота',g.lon.toFixed(3)+'°'],['Освещение',shadow?'В земной тени':'На солнечной стороне'],['Набор NASA',data.created+' UTC'],['Покрытие',utc(data.min)+' — '+utc(data.max)]];
    for(const [selector,values] of [['[data-metrics]',rows.slice(0,6)],['[data-values]',rows.slice(6)]])$(selector).innerHTML=values.map(([label,value])=>'<div><dt>'+label+'</dt><dd>'+value+'</dd></div>').join('');
   }
+  }
+  if(rendered){
+   refreshModelProfile(model);
+   renderer.info.reset();
+   renderer.render(scene,camera);
+   nextFrame=now+33;
+  }
+  return rendered;
  }};
  onOpen();atlas.stage.append(menu);atlas.mount(api);
  bounds();setTime(Date.now()/1000);mode.value=follow?'free':'overview';
  atlas.pause(true);
  const listen={signal:lifecycle.signal};
- function changeMode(value){mode.value=value;needsFrame=true;if(value!=='overview')loadModel();}
+ function changeMode(value){mode.value=value;needsFrame=true;}
  mode.onchange=()=>changeMode(mode.value);
  for(const button of menu.querySelectorAll('[data-view]'))button.onclick=()=>changeMode(button.dataset.view);
  $('[data-station]').onclick=()=>changeMode('free');
@@ -215,20 +229,20 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
  $('[data-cinema]').onclick=()=>{dock.hidden=true;};
  menu.addEventListener('keydown',e=>{if(e.key!=='Escape')e.stopPropagation();},listen);
  document.addEventListener('keydown',e=>{
-  if(e.key!=='Escape')return;e.preventDefault();e.stopImmediatePropagation();
+  if(e.key!=='Escape'||document.querySelector('#graphics-dialog[open]'))return;e.preventDefault();e.stopImmediatePropagation();
   if(dock.hidden)dock.hidden=false;else close();
  },{...listen,capture:true});
- for(const nav of ['#object-navigation','.topbar'])document.querySelector(nav).addEventListener('click',e=>{if(e.target.closest('button:not([data-object-tab])'))close();},{...listen,capture:true});
+ for(const nav of ['#object-navigation','.topbar'])document.querySelector(nav).addEventListener('click',e=>{if(e.target.closest('button:not([data-object-tab]):not(#graphics-open)'))close();},{...listen,capture:true});
  $('[data-exit=atlas]').onclick=()=>close();
  $('[data-exit=history]').onclick=()=>close('history');
- function loadModel(){
-  if(model||loading||closed)return;
-  loading=true;
-  loadSpacecraftModel(item.model,item.draco,lifecycle.signal).then(gltf=>{
-  if(!gltf)return;
-  if(closed){disposeModel(gltf.scene);return;}
+ watchStationModel(item.model,lifecycle.signal,loadSpacecraftModel,(gltf,timing)=>{
+  modelLoad=timing;
+  const first=!model;
+  if(model){craft.remove(model);disposeModel(model);}
+  materialColors.clear();
+  previousShadow=undefined;
   model=gltf.scene;
-  const box=new T.Box3().setFromObject(model),edge=box.getSize(new T.Vector3());
+  const box=new T.Box3(new T.Vector3(...stationMin),new T.Vector3(...stationMax)),edge=box.getSize(new T.Vector3());
   const size=Math.max(edge.x,edge.y,edge.z);
   model.traverse(node=>{
    for(const material of [node.material].flat())if(material?.color&&!materialColors.has(material))materialColors.set(material,material.color.clone());
@@ -236,8 +250,7 @@ export async function openISSFlight(item,{follow,signal,onOpen}){
   const stage=new T.Group();
   model.position.sub(box.getCenter(new T.Vector3()));
   stage.add(model);craft.add(stage);model=stage;model.userData.size=size;
-  $('[data-scale]').onchange();
-  }).catch(error=>{if(!closed)message('3D-модель недоступна: '+error.message);}).finally(()=>{loading=false;});
- }
- loadModel();
+  model.scale.setScalar(Number($('[data-scale]').value)*.109/size/radiusKm);
+  if(first)needsFrame=true;
+  },error=>message('Детализация МКС недоступна: '+error.message));
 }

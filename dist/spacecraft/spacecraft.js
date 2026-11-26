@@ -1,6 +1,7 @@
 import {revealObjectTab} from '../object-navigation.js';
 import {stationParts,stationHistory,stationPhotos,stationInteriors} from './iss-data.js';
 import {spacecraft} from './catalog.js';
+import {openGraphics} from '../graphics.js';
 import {createViewer} from './viewer.js';
 import {parts,partById,statusAt} from './parts.js';
 import {events,eventById,photos} from './history-data.js';
@@ -64,8 +65,9 @@ export function openSpacecraft(id, trigger, initial={}) {
  dialog.innerHTML=`
   <header class="spacecraft-header">
    <div><div class="eyebrow">КОСМИЧЕСКАЯ ТЕХНИКА</div><h2 id="spacecraft-title">${item.title}</h2></div>
-   <div class="spacecraft-header-actions"><button data-full aria-label="Полноэкранный просмотр">⛶</button><button data-close autofocus>Закрыть</button></div>
+   <div class="spacecraft-header-actions"><button type="button" data-graphics>Графика</button><button data-full aria-label="Полноэкранный просмотр">⛶</button><button data-close autofocus>Закрыть</button></div>
   </header>
+  <div data-viewer-stats></div>
   <nav class="spacecraft-tabs" aria-label="Режим миссии" >${tabs.map(([id,name])=>`<button data-tab="${id}">${name}</button>`).join('')}</nav>
   <p class="mission-notice" role="status" hidden></p>
   <div class="spacecraft-grid" data-viewer>
@@ -121,6 +123,7 @@ export function openSpacecraft(id, trigger, initial={}) {
   for(const button of actions)button.disabled=true;
   try{
    viewer=createViewer(host,item.model,{
+    statsSlot:get('[data-viewer-stats]'),label:()=>item.title+' · '+(tab==='parts'?'Устройство':'Осмотр'),
     parts:item.mission?parts:[],
     presentation:item.presentation,
     enablePan:item.enablePan,
@@ -223,7 +226,7 @@ export function openSpacecraft(id, trigger, initial={}) {
    if(station){
     const {openISSFlight}=await import('./iss-flight.js');
     if(!dialog.open)return;
-    await openISSFlight({...item,reopen:tab=>openSpacecraft(id,trigger,{tab})},{follow,signal:lifecycle.signal,onOpen:()=>{enteringFlight=true;dialog.close();}});
+    await openISSFlight({...item,reopen:tab=>openSpacecraft(id,trigger,{tab})},{follow,signal:lifecycle.signal,onOpen:()=>{enteringFlight=true;release();dialog.close();}});
     return;
    }
    const {openFlight}=await import('./flight.js');
@@ -231,7 +234,7 @@ export function openSpacecraft(id, trigger, initial={}) {
    await openFlight({...item,reopen:(tab,event,time)=>openSpacecraft(id,trigger,{tab,event,time})},{
     id:flybys.has(flyId)||eventById[flyId]?.utc||flyId==='last'?flyId:'neptune',follow,play,signal:lifecycle.signal,onOpen:()=>{
      if(!dialog.open)throw Error('Просмотр закрыт.');
-     enteringFlight=true;dialog.close();
+     enteringFlight=true;release();dialog.close();
     }
    });
    notice.hidden=true;
@@ -276,6 +279,7 @@ export function openSpacecraft(id, trigger, initial={}) {
   get('[data-station-angle]').onchange=e=>{if(!ready)return;if(e.target.value)viewer.angle(...e.target.value.split(',').map(Number));else viewer.full();};
  }
  retry.onclick=start;
+ get('[data-graphics]').onclick=openGraphics;
  get('[data-full]').onclick=()=>void toggleFullscreen(dialog);
  get('[data-close]').onclick=()=>dialog.close();
  dialog.addEventListener('keydown',e=>e.stopPropagation());

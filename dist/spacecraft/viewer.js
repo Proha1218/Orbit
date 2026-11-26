@@ -3,19 +3,31 @@ import {
  PerspectiveCamera, Quaternion, Raycaster, Scene, Vector2, Vector3, WebGLRenderer
 } from '../vendor/three.module.js';
 import {OrbitControls} from '../vendor/OrbitControls.js';
+import {modelLoadLabel,refreshModelProfile,registerGraphicsViewer,viewerRatio} from '../graphics.js';
+import {resourceSignal} from '../load-resource.js';
+import {stationMin,stationMax,trimStationAttributes,watchStationModel} from './station-lod.js';
 import {GLTFLoader} from '../vendor/loaders/GLTFLoader.js';
 
 const initialDirection = new Vector3(1.35, .68, 1.1).normalize();
 const viewRight = new Vector3(0, 1, 0).cross(initialDirection).normalize();
 const viewUp = initialDirection.clone().cross(viewRight);
 
-function viewPoints(model) {
+function viewPoints(model,useBounds) {
  const points = [];
  const vertex = new Vector3();
  model.updateMatrixWorld(true);
  model.traverse(mesh => {
   const positions = mesh.geometry?.getAttribute('position');
   if (!positions) return;
+  if(useBounds){
+   mesh.geometry.computeBoundingBox();
+   const {min,max}=mesh.geometry.boundingBox;
+   for(const x of [min.x,max.x])for(const y of [min.y,max.y])for(const z of [min.z,max.z]){
+    vertex.set(x,y,z).applyMatrix4(mesh.matrixWorld);
+    points.push([vertex.dot(viewRight),vertex.dot(viewUp),vertex.dot(initialDirection)]);
+   }
+   return;
+  }
   for (let i = 0; i < positions.count; i++) {
    vertex.fromBufferAttribute(positions, i).applyMatrix4(mesh.matrixWorld);
    points.push([vertex.dot(viewRight), vertex.dot(viewUp), vertex.dot(initialDirection)]);
@@ -43,20 +55,45 @@ export function disposeModel(model) {
  for (const geometry of geometries) geometry.dispose();
 }
 
-export async function loadSpacecraftModel(url,draco,signal){
-   const response = await fetch(url, {signal: signal});
+export async function loadSpacecraftModel(url,draco,signal,station=false){
+   const deadline=resourceSignal(signal,60000);
+   const response = await fetch(url,{signal:deadline});
    if (!response.ok) throw new Error('HTTP ' + response.status);
    const bytes = await response.arrayBuffer();
    if (signal.aborted) return;
    const loader = new GLTFLoader();
+   if(station&&draco)loader.register(parser=>({name:'orbita-station-attributes',beforeRoot(){trimStationAttributes(parser.json);}}));
+   if(station&&!draco){
+    const {MeshoptDecoder}=await import('../vendor/meshopt_decoder.module.js');
+    loader.setMeshoptDecoder(MeshoptDecoder);
+   }
    let decoder;
    if (draco) {
     const {DRACOLoader} = await import('../vendor/loaders/DRACOLoader.js');
     if (signal.aborted) return;
-    decoder = new DRACOLoader().setDecoderPath(new URL('../vendor/draco/', import.meta.url).href);
+    deadline.throwIfAborted();
+    decoder = new DRACOLoader().setDecoderPath(new URL('../vendor/draco/', import.meta.url).href).setWorkerLimit(2);
     loader.setDRACOLoader(decoder);
    }
-   return loader.parseAsync(bytes, new URL('.', url).href).finally(() => decoder?.dispose());
+   const pending=loader.parseAsync(bytes,new URL('.',url).href).then(gltf=>{
+    if(!deadline.aborted)return gltf;
+    disposeModel(gltf.scene);
+    throw deadline.reason;
+   });
+   let cancel;
+   try {
+    const cancelled=new Promise((_,reject)=>{
+     cancel=()=>reject(deadline.reason);
+     if(deadline.aborted)cancel();
+     else deadline.addEventListener('abort',cancel,{once:true});
+    });
+    const gltf=await Promise.race([pending,cancelled]);
+    if(deadline.aborted){disposeModel(gltf.scene);throw deadline.reason;}
+    return gltf;
+   } finally {
+    deadline.removeEventListener('abort',cancel);
+    decoder?.dispose();
+   }
 }
 
 export function createViewer(host, url, callbacks) {
@@ -72,7 +109,7 @@ export function createViewer(host, url, callbacks) {
  scene.add(presentation);
  const camera = new PerspectiveCamera(40);
  const renderer = new WebGLRenderer({alpha: true, antialias: true});
- renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+
  renderer.toneMapping = NeutralToneMapping;
  renderer.domElement.setAttribute('aria-label', 'Интерактивная модель аппарата');
  host.prepend(renderer.domElement);
@@ -87,7 +124,7 @@ export function createViewer(host, url, callbacks) {
  fill.position.set(-4, 1, -5);
  scene.add(key, fill, new HemisphereLight(0xe2ebff, 0x7c8395, 2.1));
 
- let model, radius, points, distance, previousTime, frame, cameraMove, highlight, down;
+ let model, modelLoad, radius, points, distance, previousTime, frame, cameraMove, highlight, down;
  let markersVisible = false, partsActive = false;
  const ray = new Raycaster(), pointer = new Vector2();
  const surfaces = [];
@@ -165,6 +202,8 @@ export function createViewer(host, url, callbacks) {
  function size() {
   const width = host.clientWidth, height = host.clientHeight;
   if (!width || !height) return;
+  const ratio=viewerRatio(width,height,renderer.capabilities.maxTextureSize);
+  if(renderer.getPixelRatio()!==ratio)renderer.setPixelRatio(ratio);
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   if (radius) {
@@ -218,10 +257,13 @@ export function createViewer(host, url, callbacks) {
    if(t===1) cameraMove=null;
   }
   controls.update(dt);
+  refreshModelProfile(model);
   renderer.render(scene, camera);
+  diagnostics.frame(performance.now());
   updateMarkers();
   frame = requestAnimationFrame(draw);
  }
+ const diagnostics=registerGraphicsViewer(renderer,callbacks.statsSlot,()=>callbacks.label()+modelLoadLabel(modelLoad),size);
  const resize = new ResizeObserver(size);
  resize.observe(host);
  function lost(event) {
@@ -238,8 +280,23 @@ export function createViewer(host, url, callbacks) {
     disposeModel(gltf.scene);
     return;
    }
+   accept(gltf);
+  } catch (error) {
+   if (!abort.signal.aborted) callbacks.error(error);
+  }
+ }
+
+ function accept(gltf,timing){
+   modelLoad=timing;
+   const first=!model;
+   if(model){
+    clearHighlight();
+    presentation.remove(model);
+    disposeModel(model);
+    surfaces.length=0;
+   }
    model = gltf.scene;
-   const bounds = new Box3().setFromObject(model, true);
+   const bounds = callbacks.draco?new Box3(new Vector3(...stationMin),new Vector3(...stationMax)):new Box3().setFromObject(model,true);
    radius = bounds.getSize(new Vector3()).length() / 2;
    if (!Number.isFinite(radius) || radius <= 0) throw new Error('Модель не содержит геометрии');
    model.position.sub(bounds.getCenter(new Vector3()));
@@ -248,16 +305,19 @@ export function createViewer(host, url, callbacks) {
    model.traverse(object => {
     if (object.isMesh && !object.material.transparent) surfaces.push(object);
    });
-   points = viewPoints(model);
-   size();
-   reset();
-   draw(performance.now());
-   callbacks.ready();
-  } catch (error) {
-   if (!abort.signal.aborted) callbacks.error(error);
-  }
+   if(first){
+    points = viewPoints(model,callbacks.draco);
+    size();
+    reset();
+    draw(performance.now());
+    callbacks.ready();
+   }
  }
- void load();
+ if(callbacks.draco)watchStationModel(url,abort.signal,loadSpacecraftModel,accept,(error,available)=>{
+  if(!available)callbacks.error(error);
+  else console.warn('Не удалось переключить детализацию МКС',error);
+ });
+ else void load();
 
  return {
   reset, zoom, inspectPart,
@@ -274,6 +334,7 @@ export function createViewer(host, url, callbacks) {
    abort.abort();
    cancelAnimationFrame(frame);
    resize.disconnect();
+   diagnostics.dispose();
    controls.dispose();
    renderer.domElement.removeEventListener('webglcontextlost', lost);
    clearHighlight();
@@ -281,7 +342,11 @@ export function createViewer(host, url, callbacks) {
    if (model) {
     presentation.remove(model);
     disposeModel(model);
+    model=null;
    }
+   points=null;
+   surfaces.length=0;
+   scene.clear();
    renderer.dispose();
    renderer.forceContextLoss();
    renderer.domElement.remove();

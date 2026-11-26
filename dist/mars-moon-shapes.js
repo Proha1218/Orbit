@@ -8,10 +8,18 @@ export const MARS_MOON_SHAPE_SOURCE = 'https://doi.org/10.1186/s40623-023-01814-
 export const CASSINI_MOON_SHAPE_SOURCE = 'https://doi.org/10.26033/ewy3-jy61';
 const cassiniMoons = ['Atlas','Calypso','Daphnis','Epimetheus','Helene','Hyperion','Janus','Pan','Pandora','Prometheus','Telesto'];
 const shapes = new Map();
+const downloads = new Map();
 
-export async function loadMoonShapes() {
- return Promise.allSettled([...Object.keys(MARS_MOON_AXES_KM), ...cassiniMoons].map(async name => {
-  const response = await fetch(new URL('./shapes/' + name.toLowerCase() + '.bin', import.meta.url));
+export function loadMoonShape(name) {
+ if (!Object.hasOwn(MARS_MOON_AXES_KM,name) && !cassiniMoons.includes(name)) return null;
+ if (shapes.has(name)) return Promise.resolve(true);
+ if (!downloads.has(name)) downloads.set(name, load(name).finally(() => downloads.delete(name)));
+ return downloads.get(name);
+}
+
+async function load(name) {
+  const response = await fetch(new URL('./shapes/' + name.toLowerCase() + '.bin', import.meta.url),
+   {signal:AbortSignal.timeout(15000)});
   if (!response.ok) throw Error('Не удалось загрузить форму: ' + name);
   const bytes = await response.arrayBuffer();
   const header = new DataView(bytes);
@@ -24,7 +32,7 @@ export async function loadMoonShapes() {
    vertices:new Float32Array(bytes, 8, vertexCount * 8),
    indices:new Uint16Array(bytes, indexOffset, indexCount)
   });
- }));
+  return true;
 }
 
 export function moonShapeGeometry(name, unitsPerKm) {

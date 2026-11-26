@@ -1,8 +1,8 @@
-import {revealObjectTab} from './object-navigation.js';
+import {revealObjectTab,mountObjectTree,selectTreeMoon} from './object-navigation.js';
 import {ATLAS_DEPTH_RATIO, ATLAS_FAR, inspectionNear, renderDepthRange} from './camera-depth.js';
 import {connectMissionAtlas} from './spacecraft/bridge.js';
 import {applyMoonIllustration,moonIllustrationCaption,releaseMoonIllustration} from './moon-illustration.js';
-import { MARS_MOON_AXES_KM, hasCassiniMoonShape, hasMoonShape, loadMoonShapes, moonShapeGeometry } from './mars-moon-shapes.js';
+import { MARS_MOON_AXES_KM, hasCassiniMoonShape, hasMoonShape, loadMoonShape, moonShapeGeometry } from './mars-moon-shapes.js';
 import {installCoveragePilot} from './coverage-pilot.js';
 import {bodyStory} from './body-stories.js';
 import {characteristics, planetCharacteristics, profileStories, satelliteProfile, sunProfile} from './body-profile.js';
@@ -28,6 +28,8 @@ function moonMeasure(name,id){return moonSizes.byName[String(name||'').replace(/
 
 import {mountFullCatalog} from './full-catalog.js';
 import {MISSION_PHOTOS} from './mission-photos.js';
+import {readJSON} from './load-resource.js';
+import {mountGraphics,viewerActive} from './graphics.js';
 import {createMoonDetailLoader} from './moon-detail.js';
 let moonDetail;
 const inspectionLight={value:0};
@@ -45,11 +47,14 @@ const $ = s => document.querySelector(s);
 const escape = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const textureURL = name => {const [file,query]=name.split('?');return './textures/'+file+'.jpg'+(query?'?'+query:'');};
 const fmt = n => n.toLocaleString('ru-RU');
-let missionScene;
+let missionScene,graphics,drawRequest=0;
+let lastSimDays=NaN,lastMode,lastFocus;
 let catalog, scene, renderer, camera, controls, overviewGroup, focusGroup, moonGroup, focusPlanet;
 let mode = 'overview', selectedPlanet = null, selectedMoon = null, paused = false, speed = .01, simDays = 0;
 let labels = [], pickables = [], orbitLines = [], moonObjects = [], planetObjects = [], transition = null;
 let follow = null, previousFollow = new THREE.Vector3(), frame = 0, previousTime = performance.now();
+const sphereLevels=[[24,16],[48,32],[96,64]];
+const lodPosition=new THREE.Vector3();
 const temp = new THREE.Vector3(), clockSpeeds = [.01,.03,.1,.3,1,3,10,30,100,300,1000], textures = new Map();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const state = {orbits:true, labels:true, moons:true};
@@ -61,7 +66,7 @@ const majorOrder = {
 function sortedMoons(id){const order=majorOrder[id]||[];return [...(catalog.planets[id]||[])].sort((a,b)=>{const ai=order.indexOf(a.name),bi=order.indexOf(b.name);return (ai<0?999:ai)-(bi<0?999:bi);});}
 function moonName(m){return m.ru||m.name||m.designation;}
 function moonKey(m){return m.name||m.designation;}
-function texture(name){if(name==='phoebe'){if(!textures.has(name))textures.set(name,phoebeMosaic());return textures.get(name);}if(!textures.has(name)){const t=new THREE.TextureLoader().load(textureURL(name));t.wrapS=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();textures.set(name,t);}return textures.get(name);}
+function texture(name){if(name==='phoebe'){if(!textures.has(name))textures.set(name,phoebeMosaic());return textures.get(name);}if(!textures.has(name)){const t=new THREE.TextureLoader().load(textureURL(name),undefined,undefined,()=>console.warn('Текстура недоступна: '+name));t.wrapS=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();textures.set(name,t);}return textures.get(name);}
 function mini(name){return `style="background-image:url('${textureURL(name)}')"`;}
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('visible'),2400);}
 function addLabel(object,text,onClick,kind=''){const el=document.createElement('button');el.className=`object-label ${kind}`;el.textContent=text;el.onclick=onClick;$('#labels').append(el);labels.push({object,el,kind});return el;}
@@ -75,7 +80,8 @@ function addOrbit(radius,parent,color=0x6d819c,opacity=.2,inclination=0){
  line.computeLineDistances();line.rotation.x=-inclination;line.visible=state.orbits;
  parent.add(line);orbitLines.push(line);return line;
 }
-function makePlanet(p,radius){const group=new THREE.Group();const tilt=new THREE.Group();tilt.rotation.z=THREE.MathUtils.degToRad(p.tilt||0);group.add(tilt);const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,96,64),new THREE.MeshStandardMaterial({map:texture(p.texture),roughness:1,metalness:0}));mesh.castShadow=true;mesh.receiveShadow=true;tilt.add(mesh);group.userData={mesh,tilt,radius,planet:p};if(p.id==='mars')group.userData.seasonCaps=addMarsSeason(mesh.material);
+function makePlanet(p,radius,overview=false){const group=new THREE.Group();const tilt=new THREE.Group();tilt.rotation.z=THREE.MathUtils.degToRad(p.tilt||0);group.add(tilt);const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,...sphereLevels[overview?0:2]),new THREE.MeshStandardMaterial({map:texture(p.texture),roughness:1,metalness:0}));mesh.castShadow=true;mesh.receiveShadow=true;tilt.add(mesh);group.userData={mesh,tilt,radius,planet:p};
+ if(overview)group.userData.lod={level:0,geometries:[mesh.geometry]};if(p.id==='mars')group.userData.seasonCaps=addMarsSeason(mesh.material);
  if(p.id==='earth'){
   const cloudMask=texture('earth_clouds');
   // This texture encodes opacity. Keep its samples linear and tint the clouds separately.
@@ -102,20 +108,20 @@ function makePlanet(p,radius){const group=new THREE.Group();const tilt=new THREE
 function starfield(){let seed=731;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};const positions=[],colors=[];for(let i=0;i<2300;i++){const theta=rnd()*Math.PI*2,u=rnd()*2-1,r=600+rnd()*500,s=Math.sqrt(1-u*u);positions.push(r*s*Math.cos(theta),r*u,r*s*Math.sin(theta));const c=.35+rnd()*.5;colors.push(c*.8,c*.88,c);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:1.15,sizeAttenuation:false,vertexColors:true,transparent:true,opacity:.8,depthWrite:false})));}
 function oldMakeBelt(inner,outer,count,color){let seed=Math.floor(inner*123);const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};const pos=[],cols=[];const base=new THREE.Color(color);for(let i=0;i<count;i++){const a=rnd()*Math.PI*2,r=Math.sqrt(inner*inner+rnd()*(outer*outer-inner*inner));pos.push(Math.cos(a)*r,(rnd()-.5)*(outer-inner)*.17,Math.sin(a)*r);const c=base.clone().multiplyScalar(.4+rnd()*.6);cols.push(c.r,c.g,c.b);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));return new THREE.Points(geo,new THREE.PointsMaterial({size:.36,vertexColors:true,transparent:true,opacity:.75,sizeAttenuation:true,depthWrite:false}));}
 function glowTexture(){const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d'),g=ctx.createRadialGradient(128,128,0,128,128,128);g.addColorStop(0,'rgba(255,204,126,.8)');g.addColorStop(.2,'rgba(255,166,66,.32)');g.addColorStop(.5,'rgba(255,130,38,.08)');g.addColorStop(1,'rgba(255,100,20,0)');ctx.fillStyle=g;ctx.fillRect(0,0,256,256);return new THREE.CanvasTexture(c);}
-function initScene(){renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x090e18,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;moonDetail=createMoonDetailLoader(renderer,text=>{const badge=$('#map-quality');if(badge)badge.textContent=text;});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('#canvas-host').append(renderer.domElement);renderer.domElement.setAttribute('aria-label','3D-модель. Выбор объектов также доступен в меню планет и каталоге спутников.');scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(43,1,.0001,100000);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=false;controls.minDistance=.6;controls.maxDistance=2000;controls.maxPolarAngle=Math.PI*.92;controls.addEventListener('start',()=>{transition=null;});scene.add(new THREE.AmbientLight(0x9eafc8,.24));const key=seasonLight=new THREE.DirectionalLight(0xffefdd,3.4);key.position.copy(lightDirection);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-35;key.shadow.camera.right=35;key.shadow.camera.top=35;key.shadow.camera.bottom=-35;key.shadow.camera.near=1;key.shadow.camera.far=150;key.shadow.bias=-.0003;key.shadow.normalBias=.025;scene.add(key);starfield();overviewGroup=new THREE.Group();scene.add(overviewGroup);focusGroup=new THREE.Group();scene.add(focusGroup);focusGroup.visible=false;
+function initScene(){renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setClearColor(0x090e18,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;moonDetail=createMoonDetailLoader(renderer,text=>{const badge=$('#map-quality');if(badge)badge.textContent=text;});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('#canvas-host').append(renderer.domElement);renderer.domElement.setAttribute('aria-label','3D-модель. Выбор объектов также доступен в меню планет и каталоге спутников.');scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(43,1,.0001,100000);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=false;controls.minDistance=.6;controls.maxDistance=2000;controls.maxPolarAngle=Math.PI*.92;controls.addEventListener('start',()=>{transition=null;});scene.add(new THREE.AmbientLight(0x9eafc8,.24));const key=seasonLight=new THREE.DirectionalLight(0xffefdd,3.4);key.position.copy(lightDirection);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-35;key.shadow.camera.right=35;key.shadow.camera.top=35;key.shadow.camera.bottom=-35;key.shadow.camera.near=1;key.shadow.camera.far=150;key.shadow.bias=-.0003;key.shadow.normalBias=.025;scene.add(key);starfield();overviewGroup=new THREE.Group();scene.add(overviewGroup);focusGroup=new THREE.Group();scene.add(focusGroup);focusGroup.visible=false;
  const sun=new THREE.Mesh(new THREE.SphereGeometry(realScale?695700/overviewUnitKm:5.3,64,40),sunMaterial(texture('sun-soho')));overviewGroup.add(sun);sun.userData.action=showSun;const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture(),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));glow.scale.setScalar(realScale?.22:23);glow.material.opacity=.32;overviewGroup.add(glow);overviewGroup.userData.sun=sun;overviewGroup.userData.sunGlow=glow;const sunLight=new THREE.PointLight(0xffdfb0,75,250,1);overviewGroup.add(sunLight);
- PLANETS.forEach((p,i)=>{const body=makePlanet(p,realScale?Number(p.diameter.replaceAll(' ',''))/2/overviewUnitKm:p.radius);body.userData.phase=[2.8,4.35,.6,2.05,5.35,3.65,1.12,5.8][i];body.userData.action=()=>showPlanet(p.id);overviewGroup.add(body);addOrbit(realScale?planetKm[i]/overviewUnitKm:p.orbit,overviewGroup);planetObjects.push(body);});
+ PLANETS.forEach((p,i)=>{const body=makePlanet(p,realScale?Number(p.diameter.replaceAll(' ',''))/2/overviewUnitKm:p.radius,true);body.userData.phase=[2.8,4.35,.6,2.05,5.35,3.65,1.12,5.8][i];body.userData.action=()=>showPlanet(p.id);overviewGroup.add(body);addOrbit(realScale?planetKm[i]/overviewUnitKm:p.orbit,overviewGroup);planetObjects.push(body);});
  const asteroid=livingBelt({inner:realScale?21:35,outer:realScale?33:40.5,count:3300,kind:"asteroid"}),kuiper=livingBelt({inner:realScale?300:108,outer:realScale?500:127,count:5000,kind:"kuiper"});overviewGroup.add(asteroid,kuiper);overviewGroup.userData.belts={asteroid,kuiper};
  new ResizeObserver(resize).observe($('#stage'));resize();renderer.domElement.addEventListener('pointerdown',e=>{renderer.domElement._down=[e.clientX,e.clientY];});renderer.domElement.addEventListener('pointerup',pick);renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();toast('Графическая сцена приостановлена. Обновите страницу.');});
 }
-function resize(){if(!renderer)return;const {width,height}=$('#stage').getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/Math.max(1,height);camera.updateProjectionMatrix();}
+function resize(){if(!renderer)return;const {width,height}=$('#stage').getBoundingClientRect();const ratio=graphics?.ratio(width,height)??1;if(renderer.getPixelRatio()!==ratio)renderer.setPixelRatio(ratio);renderer.setSize(width,height);camera.aspect=width/Math.max(1,height);camera.updateProjectionMatrix();}
 function pick(e){if(missionScene)return;const down=renderer.domElement._down;if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;const r=renderer.domElement.getBoundingClientRect(),ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),camera);const hits=ray.intersectObjects(pickables,true);for(const hit of hits){let obj=hit.object;while(obj&&!obj.userData.action)obj=obj.parent;if(obj?.userData.action){obj.userData.action();return;}}}
 function fly(position,target=new THREE.Vector3(),instant=false){follow=null;if(instant||reducedMotion){camera.position.copy(position);controls.target.copy(target);controls.update();transition=null;return;}transition={start:performance.now(),from:camera.position.clone(),to:position.clone(),targetFrom:controls.target.clone(),targetTo:target.clone()};}
-function setSelected(id){revealObjectTab([...$('#object-navigation').querySelectorAll('[data-planet],[data-dwarf],[data-belt]')].find(button=>(button.dataset.planet||button.dataset.dwarf||button.dataset.belt)===id));document.querySelectorAll('.planet-button').forEach(b=>b.classList.toggle('selected',b.dataset.planet===id));$('#overview').classList.toggle('selected',id==='overview');document.querySelectorAll('.belt-button').forEach(b=>b.classList.toggle('selected',(b.dataset.belt||b.dataset.dwarf)===id));}
+function setSelected(id){selectTreeMoon(null);revealObjectTab([...$('#object-navigation').querySelectorAll('[data-planet],[data-dwarf],[data-belt]')].find(button=>(button.dataset.planet||button.dataset.dwarf||button.dataset.belt)===id));document.querySelectorAll('.planet-button').forEach(b=>b.classList.toggle('selected',b.dataset.planet===id));$('#overview').classList.toggle('selected',id==='overview');document.querySelectorAll('.belt-button').forEach(b=>b.classList.toggle('selected',(b.dataset.belt||b.dataset.dwarf)===id));}
 function title(eyebrow,heading,subtitle,badge){$('#belt-scale-note')?.remove();$('#scale-mode').hidden=mode==='catalog';$('#illuminate').hidden=!['planet','catalog','dwarf'].includes(mode);document.body.classList.toggle('real-scale',realScale);$('#eyebrow').textContent=eyebrow;$('#scene-title').innerHTML=escape(heading)+'<span>.</span>';$('#scene-subtitle').textContent=subtitle;$('#scene-badge').textContent=badge;}
 function addOverviewLabels(){clearLabels();addLabel(overviewGroup.userData.sun,'Солнце',showSun,'major');planetObjects.forEach(body=>addLabel(body,body.userData.planet.name,body.userData.action));beltAnchors.forEach(a=>overviewGroup.remove(a));beltAnchors=[];const a=new THREE.Object3D();a.position.set(-26,0,27);overviewGroup.add(a);const k=new THREE.Object3D();k.position.set(realScale?380:75,0,realScale?-180:-89);overviewGroup.add(k);beltAnchors.push(a,k);addLabel(a,'ПОЯС АСТЕРОИДОВ',()=>showBelt('asteroid'),'major');addLabel(k,'ПОЯС КОЙПЕРА',()=>showBelt('kuiper'),'major');}
 function overviewPosition(){const aspect=camera.aspect;const factor=realScale?3.7:1;return new THREE.Vector3(0,(aspect<.85?210:165)*factor,(aspect<.85?255:195)*factor);}
-function showOverview(instant=false){dwarfSystem?.hide();viewingSun=false;planetObjects.forEach(o=>o.visible=true);overviewGroup.userData.belts.asteroid.visible=true;overviewGroup.userData.belts.kuiper.visible=true;moonDetail?.release();mode='overview';if(seasonLight){seasonLight.position.copy(lightDirection);scene.traverse(o=>{if(o.material?.uniforms?.sunDirection)o.material.uniforms.sunDirection.value.copy(lightDirection).normalize();});}controls.minDistance=10;controls.maxDistance=2000;selectedPlanet=null;selectedMoon=null;overviewGroup.visible=true;focusGroup.visible=false;pickables=[...planetObjects,overviewGroup.userData.sun];orbitLines.forEach(o=>o.visible=state.orbits);addOverviewLabels();setSelected('overview');title('НАШ КОСМИЧЕСКИЙ АДРЕС','Солнечная система','Восемь миров. Одна звезда. Ваше путешествие.','ОБЗОР СИСТЕМЫ');fly(overviewPosition(),new THREE.Vector3(),instant===true);$('#details').innerHTML=`<div class="details-kicker"><span>НАЧАЛО ПУТЕШЕСТВИЯ</span><span>☉</span></div><div class="detail-hero sun"><span class="planet-mini" ${mini('sun-soho')}></span></div><div class="latin">The Solar System</div><h2>Всё начинается<br>со звезды.</h2><p class="description">Солнце объединяет восемь планет, сотни спутников и бесчисленные малые тела в одну систему. Выберите мир, чтобы рассмотреть его ближе.</p><div class="fact-grid"><div><small>ПЛАНЕТ</small><strong>8</strong></div><div><small>СПУТНИКОВ 8 ПЛАНЕТ</small><strong>${Object.values(catalog.planets).flat().length}</strong></div><div><small>ВОЗРАСТ СИСТЕМЫ</small><strong>4,6<em>млрд лет</em></strong></div><div><small>ПОЯСА МАЛЫХ ТЕЛ</small><strong>2</strong></div></div><div class="did-you-know"><h3>НАЧНИТЕ С ДОМА</h3><p>Посмотрите на Землю со стороны, найдите Луну, а затем отправляйтесь к кольцам Сатурна.</p></div><button class="cta" id="start-earth">Отправиться к Земле <span>↗</span></button>`;$('#start-earth').onclick=()=>showPlanet('earth');const sunButton=document.createElement('button');sunButton.className='cta secondary-cta';sunButton.textContent='Рассмотреть Солнце ↗';sunButton.onclick=showSun;$('#start-earth').after(sunButton);mountSunAppearance($('#details'),overviewGroup.userData.sun.material,overviewGroup.userData.sunGlow);$('#details').scrollTop=0;}
+function showOverview(instant=false){dwarfSystem?.hide();viewingSun=false;planetObjects.forEach(o=>o.visible=true);overviewGroup.userData.belts.asteroid.visible=true;overviewGroup.userData.belts.kuiper.visible=true;moonDetail?.release();mode='overview';if(seasonLight){seasonLight.position.copy(lightDirection);scene.traverse(o=>{if(o.material?.uniforms?.sunDirection)o.material.uniforms.sunDirection.value.copy(lightDirection).normalize();});}controls.minDistance=10;controls.maxDistance=2000;selectedPlanet=null;selectedMoon=null;overviewGroup.visible=true;focusGroup.visible=false;disposeFocus();focusPlanet=null;moonGroup=null;follow=null;pickables=[...planetObjects,overviewGroup.userData.sun];orbitLines.forEach(o=>o.visible=state.orbits);addOverviewLabels();setSelected('overview');title('НАШ КОСМИЧЕСКИЙ АДРЕС','Солнечная система','Восемь миров. Одна звезда. Ваше путешествие.','ОБЗОР СИСТЕМЫ');fly(overviewPosition(),new THREE.Vector3(),instant===true);$('#details').innerHTML=`<div class="details-kicker"><span>НАЧАЛО ПУТЕШЕСТВИЯ</span><span>☉</span></div><div class="detail-hero sun"><span class="planet-mini" ${mini('sun-soho')}></span></div><div class="latin">The Solar System</div><h2>Всё начинается<br>со звезды.</h2><p class="description">Солнце объединяет восемь планет, сотни спутников и бесчисленные малые тела в одну систему. Выберите мир, чтобы рассмотреть его ближе.</p><div class="fact-grid"><div><small>ПЛАНЕТ</small><strong>8</strong></div><div><small>СПУТНИКОВ 8 ПЛАНЕТ</small><strong>${Object.values(catalog.planets).flat().length}</strong></div><div><small>ВОЗРАСТ СИСТЕМЫ</small><strong>4,6<em>млрд лет</em></strong></div><div><small>ПОЯСА МАЛЫХ ТЕЛ</small><strong>2</strong></div></div><div class="did-you-know"><h3>НАЧНИТЕ С ДОМА</h3><p>Посмотрите на Землю со стороны, найдите Луну, а затем отправляйтесь к кольцам Сатурна.</p></div><button class="cta" id="start-earth">Отправиться к Земле <span>↗</span></button>`;$('#start-earth').onclick=()=>showPlanet('earth');const sunButton=document.createElement('button');sunButton.className='cta secondary-cta';sunButton.textContent='Рассмотреть Солнце ↗';sunButton.onclick=showSun;$('#start-earth').after(sunButton);mountSunAppearance($('#details'),overviewGroup.userData.sun.material,overviewGroup.userData.sunGlow);$('#details').scrollTop=0;}
 function showSun(){
  if(mode!=='overview')showOverview(true);
  viewingSun=true;
@@ -135,7 +141,13 @@ function showSun(){
  controls.minDistance=radius*1.2;
  fly(new THREE.Vector3(0,radius*.8,radius*4.4));
 }
-function disposeFocus(){moonDetail.release();clearLabels();focusGroup.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());}});focusGroup.clear();moonObjects=[];orbitLines=orbitLines.filter(l=>l.parent===overviewGroup);}
+function disposeFocus(){moonDetail.release();clearLabels();const geometries=new Set(),materials=new Set();
+ focusGroup.traverse(object=>{
+  if(object.geometry)geometries.add(object.geometry);
+  if(object.material)for(const material of [object.material].flat())materials.add(material);
+ });
+ for(const geometry of geometries)geometry.dispose();
+ for(const material of materials)material.dispose();focusGroup.clear();moonObjects=[];orbitLines=orbitLines.filter(l=>l.parent===overviewGroup);}
 let moonMarkerMap;
 function moonMarkerMaterial(){
  if(!moonMarkerMap){
@@ -152,7 +164,14 @@ function moonMarkerMaterial(){
 function planetViewPosition(id){
  return id==="uranus"?new THREE.Vector3(-9,4.5,16.5):new THREE.Vector3(0,6.5,18);
 }
-function showPlanet(id){dwarfSystem?.hide();const p=PLANETS.find(p=>p.id===id);if(!p)return;mode='planet';controls.minDistance=4;selectedPlanet=p;selectedMoon=null;focusKmPerUnit=primaryMeanKm[p.id]/3.3;overviewGroup.visible=false;focusGroup.visible=true;disposeFocus();focusPlanet=makePlanet(p,3.3);focusGroup.add(focusPlanet);focusPlanet.userData.action=()=>resetCamera();pickables=[focusPlanet];moonGroup=new THREE.Group();moonGroup.visible=state.moons;focusGroup.add(moonGroup);const moons=sortedMoons(id);let outerEdge=id==='saturn'?8.3:6.2;moons.forEach((m,i)=>{const key=moonKey(m),info=MOON_DETAILS[key],mapMeta=MOON_MAPS[key],important=i<(majorOrder[id]||[]).length;const element=orbitalData[key.replace(/\s+/g,'')];const measured=moonMeasure(key,key);const diameter=measured?.radiusKm?measured.radiusKm*2:null;const radius=diameter?diameter/2/focusKmPerUnit:.00003;const safeRadius=radius*1.4;const orbit=realScale?(element?element.a/focusKmPerUnit:null):outerEdge+safeRadius+.5;outerEdge=(orbit||outerEdge)+safeRadius+.5;if(realScale&&!orbit)return;const shape=diameter?moonShapeGeometry(key,1/focusKmPerUnit):null;let body=new THREE.Mesh(shape??new THREE.SphereGeometry(radius,mapMeta?96:16,mapMeta?64:12),new THREE.MeshStandardMaterial({map:mapMeta?texture(mapMeta.texture):null,bumpMap:null,color:mapMeta?0xffffff:0x888d95,roughness:1}));if(mapMeta?.partial)partialCoverage(body.material,fillableMoons.has(key));if(key==='Europa')installCoveragePilot(body.material,key.toLowerCase());if(key==='Titan'){body.material.map=null;body.material.bumpMap=null;body.material.color.setHex(0xd2a667);const haze=atmosphere(radius,0xdcae6d,lightDirection);haze.name='titan-haze';body.add(haze);haze.scale.setScalar(1.02);}if(!diameter){body.geometry.dispose();body.material.dispose();body=new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]),moonMarkerMaterial());}body.castShadow=important;body.receiveShadow=important;const axes=MARS_MOON_AXES_KM[key]??measured?.semiaxesKm;if(diameter&&axes&&!shape){body.scale.set(...axes.map(axis=>axis/measured.radiusKm));}body.userData={moon:m,radius,orbit,aKm:element?.a,marker:!diameter,phase:i*2.399,inc:important?.03:Math.sin(i*15)*.7,speed:realScale&&element?.period?Math.PI*2/Math.abs(element.period)/.12*(key==='Triton'?-1:1):(key==='Triton'?-1:1)*(.36/Math.sqrt(orbit)),action:()=>selectMoon(key),important};moonGroup.add(body);moonObjects.push(body);pickables.push(body);if(important){addOrbit(orbit,moonGroup,0x7a91ae,.16,body.userData.inc);addLabel(body,moonName(m),body.userData.action);} });
+function showPlanet(id){dwarfSystem?.hide();const p=PLANETS.find(p=>p.id===id);if(!p)return;mode='planet';controls.minDistance=4;selectedPlanet=p;selectedMoon=null;focusKmPerUnit=primaryMeanKm[p.id]/3.3;overviewGroup.visible=false;focusGroup.visible=true;disposeFocus();focusPlanet=makePlanet(p,3.3);focusGroup.add(focusPlanet);focusPlanet.userData.action=()=>resetCamera();pickables=[focusPlanet];moonGroup=new THREE.Group();moonGroup.visible=state.moons;focusGroup.add(moonGroup);const moons=sortedMoons(id);let markerGeometry,markerMaterial;let outerEdge=id==='saturn'?8.3:6.2;moons.forEach((m,i)=>{const key=moonKey(m),info=MOON_DETAILS[key],mapMeta=MOON_MAPS[key],important=i<(majorOrder[id]||[]).length;const element=orbitalData[key.replace(/\s+/g,'')];const measured=moonMeasure(key,key);const diameter=measured?.radiusKm?measured.radiusKm*2:null;const radius=diameter?diameter/2/focusKmPerUnit:.00003;const safeRadius=radius*1.4;const orbit=realScale?(element?element.a/focusKmPerUnit:null):outerEdge+safeRadius+.5;outerEdge=(orbit||outerEdge)+safeRadius+.5;if(realScale&&!orbit)return;const shape=diameter?moonShapeGeometry(key,1/focusKmPerUnit):null;let body;
+ if(diameter){
+ body=new THREE.Mesh(shape??new THREE.SphereGeometry(radius,mapMeta?96:16,mapMeta?64:12),new THREE.MeshStandardMaterial({map:mapMeta?texture(mapMeta.texture):null,bumpMap:null,color:mapMeta?0xffffff:0x888d95,roughness:1}));if(mapMeta?.partial)partialCoverage(body.material,fillableMoons.has(key));if(key==='Europa')installCoveragePilot(body.material,key.toLowerCase());if(key==='Titan'){body.material.map=null;body.material.bumpMap=null;body.material.color.setHex(0xd2a667);const haze=atmosphere(radius,0xdcae6d,lightDirection);haze.name='titan-haze';body.add(haze);haze.scale.setScalar(1.02);} }else{
+  markerGeometry??=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]);
+  markerMaterial??=moonMarkerMaterial();
+  body=new THREE.Points(markerGeometry,markerMaterial);
+ }
+ body.castShadow=important;body.receiveShadow=important;const axes=MARS_MOON_AXES_KM[key]??measured?.semiaxesKm;if(diameter&&axes&&!shape){body.scale.set(...axes.map(axis=>axis/measured.radiusKm));}body.userData={moon:m,radius,orbit,aKm:element?.a,marker:!diameter,phase:i*2.399,inc:important?.03:Math.sin(i*15)*.7,speed:realScale&&element?.period?Math.PI*2/Math.abs(element.period)/.12*(key==='Triton'?-1:1):(key==='Triton'?-1:1)*(.36/Math.sqrt(orbit)),action:()=>selectMoon(key),important};moonGroup.add(body);if(diameter&&!shape) upgradeMoonMesh(body,key,1/focusKmPerUnit,moonGroup);moonObjects.push(body);pickables.push(body);if(important){addOrbit(orbit,moonGroup,0x7a91ae,.16,body.userData.inc);addLabel(body,moonName(m),body.userData.action);} });
  addLabel(focusPlanet,p.name,()=>resetCamera(),'major');updateMoons();setSelected(id);title(`0${PLANETS.indexOf(p)+1} / ПЛАНЕТЫ СОЛНЕЧНОЙ СИСТЕМЫ`,p.name,moons.length?'Мир и его спутники. Выберите объект, чтобы узнать больше.':'Рассмотрите планету с любой стороны.','В СИСТЕМЕ ПЛАНЕТЫ');renderPlanetDetails(p,moons);if(p.id==='uranus')mountUranusObservations();mountSurfacePanel(p.id);fly(planetViewPosition(p.id));$('#details').scrollTop=0;syncMoonsVisibility();addPoleLabels();mountSeasons();applySeason();addScaleNote();}
 function ringNotes(id){
  const entry=RING_NOTES[id];
@@ -166,7 +185,7 @@ function mountUranusObservations(){
  panel.innerHTML=`<label for="uranus-map">Облик атмосферы Урана</label><select id="uranus-map"><option value="uranus-opal-visible-soft">Видимый свет · Hubble</option><option value="uranus-opal-f845m-soft">Ближний ИК · усиленный контраст</option></select>
  <p class="fine">Hubble OPAL, октябрь 2025 · NASA, ESA, A. A. Simon, M. H. Wong · CC BY 4.0. Карты обработаны для 3D: южное полушарие в этой серии не показано и заполнено нейтральным цветом с плавным переходом.</p>
 
- <details class="source-details"><summary>Снимок Webb крупным планом</summary><figure class="dwarf-observation"><img src="./photos/uranus-webb.png" loading="lazy" alt="Полярная шапка Урана и кольца на снимке Webb"><figcaption>Webb NIRCam · 4 сентября 2023. Инфракрасный снимок в условных цветах. NASA, ESA, CSA, STScI.</figcaption></figure></details>`;
+ <details class="source-details"><summary>Снимок Webb крупным планом</summary><figure class="dwarf-observation"><picture><source type="image/webp" srcset="./photos/uranus-webb.webp"><img src="./photos/uranus-webb.png" loading="lazy" alt="Полярная шапка Урана и кольца на снимке Webb"></picture><figcaption>Webb NIRCam · 4 сентября 2023. Инфракрасный снимок в условных цветах. NASA, ESA, CSA, STScI.</figcaption></figure></details>`;
  panel.querySelector("select").onchange=event=>{
   if(mode!=="planet"||selectedPlanet?.id!=="uranus")return;
   focusPlanet.userData.mesh.material.map=texture(event.target.value);
@@ -176,7 +195,7 @@ function mountUranusObservations(){
 }
 function renderPlanetDetails(p,moons){$('#details').innerHTML=`<div class="details-kicker"><span>ДОСЬЕ ПЛАНЕТЫ</span><span>0${PLANETS.indexOf(p)+1} / 08</span></div><div class="latin">${p.latin}</div><h2>${p.name}</h2><span class="object-type">${p.type}</span>${bodyStory(p.id)}${planetCharacteristics(p,moons.length)}<p class="description">${p.description}</p>${p.id==='neptune'?`<p class="fine">Карта облаков 4096 × 2048 · CelestiaContent. Облачные детали по снимкам Voyager 2, обработка Björn Jónsson и Askaniy. </p>`:''}${ringNotes(p.id)}${p.id==='earth'?'<button type="button" class="secondary-cta" data-spacecraft="iss" aria-haspopup="dialog">МКС <small>Орбитальная станция</small></button>':''}<div class="fact-grid"><div><small>ЭКВАТОРИАЛЬНЫЙ ДИАМЕТР</small><strong>${p.diameter}<em>км</em></strong></div><div><small>ОТ СОЛНЦА · СРЕДНЕЕ</small><strong>${p.distance}<em>млн км</em></strong></div><div><small>ПЕРИОД ОБРАЩЕНИЯ</small><strong>${p.year}</strong></div><div><small>ВРАЩЕНИЕ ВОКРУГ ОСИ</small><strong>${p.day}</strong></div></div><div class="did-you-know"><h3>БЛИЖЕ К ОТКРЫТИЮ</h3><p>${p.fact}</p></div><div class="moon-title"><h3>Спутники</h3><span class="count">${moons.length} в каталоге</span></div>${moons.length?'<input class="moon-search" id="moon-search" type="search" placeholder="Найти спутник…" aria-label="Найти спутник"><label class="maps-filter"><input id="observed-only" type="checkbox">С картами миссий</label><div id="moon-list" class="moon-list"></div><div id="moon-card"></div><p class="fine">Снимок JPL · 16.11.2026<br>Точки в сцене обозначают спутники без данных о размере. Отключить их вместе со спутниками можно переключателем «Спутники».</p>':'<p class="empty">У этой планеты нет известных естественных спутников.</p>'}`;if(moons.length){renderMoonList(moons);$('#observed-only').onchange=()=>$('#moon-search').dispatchEvent(new Event('input'));$('#moon-search').addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();renderMoonList(moons.filter(m=>(!$('#observed-only').checked||MOON_MAPS[moonKey(m)])&&[m.ru,m.name,m.designation].some(v=>v?.toLowerCase().includes(q))));});}}
 function renderMoonList(moons){$('#moon-list').innerHTML=moons.length?moons.map(m=>`<button class="moon-row ${selectedMoon===moonKey(m)?'selected':''}" data-moon="${escape(moonKey(m))}"><span class="moon-dot"></span><span>${escape(moonName(m))}${m.ru&&m.name?`<small>${escape(m.name)}</small>`:''}</span><span class="map-badge ${MOON_MAPS[moonKey(m)]?'available':'missing'}" title="${MOON_MAPS[moonKey(m)]?'Есть карта по данным миссии':'Карта не подключена'}">${MOON_MAPS[moonKey(m)]?.hd?'HD':MOON_MAPS[moonKey(m)]?'Карта':'—'}</span><span class="go">↗</span></button>`).join(''):'<p class="empty">Спутник не найден. Попробуйте другое имя или обозначение.</p>';document.querySelectorAll('.moon-row').forEach(b=>b.onclick=()=>selectMoon(b.dataset.moon));}
-function selectMoon(key){const obj=moonObjects.find(o=>moonKey(o.userData.moon)===key);if(!obj){const m=(catalog.planets[selectedPlanet.id]||[]).find(m=>moonKey(m)===key);showCatalogBody({...m,key,officialName:m?.name||key,name:moonName(m||{name:key}),parent:selectedPlanet.name,confirmed:true,sourceObject:catalog.source});return;}if(selectedMoon!==key)releaseMoonIllustration(moonObjects.find(o=>moonKey(o.userData.moon)===selectedMoon));selectedMoon=key;controls.minDistance=Math.max(.0005,obj.userData.radius*1.6);if(!state.moons){state.moons=true;$('#show-moons').checked=true;syncMoonsVisibility();}const m=obj.userData.moon,info=MOON_DETAILS[key];title('СПУТНИК · '+selectedPlanet.name.toUpperCase(),moonName(m),info?'Рассмотрите спутник и узнайте, чем он удивителен.':'Один из известных спутников в каталоге JPL.','СЛЕДОВАНИЕ ЗА СПУТНИКОМ');const target=obj.position.clone();const d=Math.max(obj.userData.marker?.025:.0004,obj.userData.radius*4.4);if(!MOON_MAPS[key]&&!obj.userData.marker&&!hasMoonShape(key)){const measure=moonMeasure(key,key);applyMoonIllustration(obj,{key,radius:obj.userData.radius,radiusKm:measure?.radiusKm,illustrative:!realScale,measuredShape:!!measure?.semiaxesKm});if(obj.userData.illustrativeSurface)$('#scene-subtitle').textContent='Иллюстрация поверхности · фотокарта не подключена';}fly(target.clone().add((['Miranda','Ariel','Umbriel','Titania','Oberon','Triton'].includes(key)?new THREE.Vector3(d*.35,-d*1.2,d*.35):new THREE.Vector3(d*.7,d*.5,d))),target);follow=obj;previousFollow.copy(obj.position);$('#moon-card').innerHTML=`<div class="moon-card"><div class="latin">СПУТНИК ПЛАНЕТЫ ${selectedPlanet.name.toUpperCase()}</div><h3>${escape(moonName(m))}</h3>${satelliteProfile({...m,key,parent:selectedPlanet.name},{measure:moonMeasure(key,key),orbit:orbitalData[key.replace(/\s+/g,'')],description:info?.text})}${mapCaption(key)}<button id="back-planet">← Вернуться к планете</button></div>`;$('#back-planet').onclick=resetCamera;document.querySelectorAll('.moon-row').forEach(b=>b.classList.toggle('selected',b.dataset.moon===key));const existing=labels.find(l=>l.object===obj);if(!existing)addLabel(obj,moonName(m),()=>selectMoon(key));if(state.orbits&&!obj.userData.important){const old=moonGroup.getObjectByName('selected-orbit');if(old){moonGroup.remove(old);old.geometry.dispose();old.material.dispose();orbitLines=orbitLines.filter(o=>o!==old);}const line=addOrbit(obj.userData.orbit,moonGroup,0xefb284,.3,obj.userData.inc);line.name='selected-orbit';}mountSurfacePanel(key);mountSeasons();applySeason();addScaleNote();moonDetail.inspect(obj,key,MOON_MAPS[key]);mountCoverageControl($('#moon-card'),key);$('#moon-card').scrollIntoView({block:'nearest',behavior:reducedMotion?'instant':'smooth'});}
+function selectMoon(key){selectTreeMoon(key);const obj=moonObjects.find(o=>moonKey(o.userData.moon)===key);if(!obj){const m=(catalog.planets[selectedPlanet.id]||[]).find(m=>moonKey(m)===key);showCatalogBody({...m,key,officialName:m?.name||key,name:moonName(m||{name:key}),parent:selectedPlanet.name,confirmed:true,sourceObject:catalog.source});return;}if(selectedMoon!==key)releaseMoonIllustration(moonObjects.find(o=>moonKey(o.userData.moon)===selectedMoon));selectedMoon=key;controls.minDistance=Math.max(.0005,obj.userData.radius*1.6);if(!state.moons){state.moons=true;$('#show-moons').checked=true;syncMoonsVisibility();}const m=obj.userData.moon,info=MOON_DETAILS[key];title('СПУТНИК · '+selectedPlanet.name.toUpperCase(),moonName(m),info?'Рассмотрите спутник и узнайте, чем он удивителен.':'Один из известных спутников в каталоге JPL.','СЛЕДОВАНИЕ ЗА СПУТНИКОМ');const target=obj.position.clone();const d=Math.max(obj.userData.marker?.025:.0004,obj.userData.radius*4.4);if(!MOON_MAPS[key]&&!obj.userData.marker&&!hasMoonShape(key)){const measure=moonMeasure(key,key);applyMoonIllustration(obj,{key,radius:obj.userData.radius,radiusKm:measure?.radiusKm,illustrative:!realScale,measuredShape:!!measure?.semiaxesKm});if(obj.userData.illustrativeSurface)$('#scene-subtitle').textContent='Иллюстрация поверхности · фотокарта не подключена';}fly(target.clone().add((['Miranda','Ariel','Umbriel','Titania','Oberon','Triton'].includes(key)?new THREE.Vector3(d*.35,-d*1.2,d*.35):new THREE.Vector3(d*.7,d*.5,d))),target);follow=obj;previousFollow.copy(obj.position);$('#moon-card').innerHTML=`<div class="moon-card"><div class="latin">СПУТНИК ПЛАНЕТЫ ${selectedPlanet.name.toUpperCase()}</div><h3>${escape(moonName(m))}</h3>${satelliteProfile({...m,key,parent:selectedPlanet.name},{measure:moonMeasure(key,key),orbit:orbitalData[key.replace(/\s+/g,'')],description:info?.text})}${mapCaption(key)}<button id="back-planet">← Вернуться к планете</button></div>`;$('#back-planet').onclick=resetCamera;document.querySelectorAll('.moon-row').forEach(b=>b.classList.toggle('selected',b.dataset.moon===key));const existing=labels.find(l=>l.object===obj);if(!existing)addLabel(obj,moonName(m),()=>selectMoon(key));if(state.orbits&&!obj.userData.important){const old=moonGroup.getObjectByName('selected-orbit');if(old){moonGroup.remove(old);old.geometry.dispose();old.material.dispose();orbitLines=orbitLines.filter(o=>o!==old);}const line=addOrbit(obj.userData.orbit,moonGroup,0xefb284,.3,obj.userData.inc);line.name='selected-orbit';}mountSurfacePanel(key);mountSeasons();applySeason();addScaleNote();moonDetail.inspect(obj,key,MOON_MAPS[key]);mountCoverageControl($('#moon-card'),key);$('#moon-card').scrollIntoView({block:'nearest',behavior:reducedMotion?'instant':'smooth'});}
 function setBeltView(id,view){
  const belt=overviewGroup.userData.belts[id];
  const {inspectTarget,inspectRadius,meanRadius}=belt.userData;
@@ -237,18 +256,78 @@ function resetCamera(){if(mode==='overview'&&viewingSun){showSun();return;}if(mo
 function showCatalogBody(entry){dwarfSystem?.hide();
  mode='catalog';selectedPlanet=null;selectedMoon=null;overviewGroup.visible=false;disposeFocus();focusGroup.visible=true;follow=null;controls.minDistance=3.5;seasonLight.position.copy(lightDirection);
  const entryName=entry.officialName||entry.key||entry.name;
- const measure=moonMeasure(entryName,entry.key);const physicalRadius=measure?.radiusKm>0?measure.radiusKm/1000:2.8;catalogViewRadius=physicalRadius;const mapped=entry.officialName==='Charon';const mapMeta=MOON_MAPS[entryName];const shape=moonShapeGeometry(entryName,1/1000);const body=new THREE.Mesh(shape??new THREE.SphereGeometry(physicalRadius,96,64),new THREE.MeshStandardMaterial({map:mapped?texture('charon-hd'):mapMeta?texture(mapMeta.texture):null,color:mapped?0xffffff:0x8e939a,roughness:1}));if(mapped)partialCoverage(body.material);else if(mapMeta?.partial)partialCoverage(body.material);if(!shape&&measure?.semiaxesKm)body.scale.set(...measure.semiaxesKm.map(axis=>axis/measure.radiusKm));if(entry.confirmed!==false&&!mapped&&!mapMeta&&!shape)applyMoonIllustration(body,{key:entry.key||entryName,radius:physicalRadius,radiusKm:measure?.radiusKm,illustrative:!realScale,measuredShape:!!measure?.semiaxesKm});focusGroup.add(body);installInspectionLight(focusGroup,inspectionLight);pickables=[];
+ const measure=moonMeasure(entryName,entry.key);const physicalRadius=measure?.radiusKm>0?measure.radiusKm/1000:2.8;catalogViewRadius=physicalRadius;const mapped=entry.officialName==='Charon';const mapMeta=MOON_MAPS[entryName];const shape=moonShapeGeometry(entryName,1/1000);const body=new THREE.Mesh(shape??new THREE.SphereGeometry(physicalRadius,96,64),new THREE.MeshStandardMaterial({map:mapped?texture('charon-hd'):mapMeta?texture(mapMeta.texture):null,color:mapped?0xffffff:0x8e939a,roughness:1}));if(mapped)partialCoverage(body.material);else if(mapMeta?.partial)partialCoverage(body.material);if(!shape&&measure?.semiaxesKm)body.scale.set(...measure.semiaxesKm.map(axis=>axis/measure.radiusKm));if(entry.confirmed!==false&&!mapped&&!mapMeta&&!shape)applyMoonIllustration(body,{key:entry.key||entryName,radius:physicalRadius,radiusKm:measure?.radiusKm,illustrative:!realScale,measuredShape:!!measure?.semiaxesKm});focusGroup.add(body);if(!shape)upgradeMoonMesh(body,entryName,1/1000,focusGroup);installInspectionLight(focusGroup,inspectionLight);pickables=[];
  title('СПУТНИК · '+entry.parent,entry.name,body.userData.illustrativeSurface?'Иллюстрация поверхности · фотокарта не подключена':(mapped||mapMeta?'Данные о поверхности · карта миссии':'Каталожная модель'),'КАТАЛОГ · '+(entry.confirmed?'ПОДТВЕРЖДЁН':'КАНДИДАТ'));
  $('#details').innerHTML='<div class="latin">КАТАЛОЖНАЯ ЗАПИСЬ</div><h2>'+escape(entry.name)+'</h2>'+satelliteProfile(entry,{measure,orbit:orbitalData[String(entryName).replace(/\s+/g,'')],description:MOON_DETAILS[entryName]?.text})+(moonIllustrationCaption(body)||(mapped?'<div class="map-provenance"></div>':baseMapCaption(entryName)))+'<p class="fine">Реальное фото поверхности в этой записи пока не подключено.</p>';
  if(mapped){$('#details').querySelector('.map-provenance').outerHTML='<div class="map-provenance"><strong>Харон · карта New Horizons / USGS · 8192×4096</strong><p>Реальная монохромная мозаика. Пустые области не заполнены выдуманным рельефом. Видимый размер в отдельном просмотре условный.</p></div>';$('#scene-subtitle').textContent='Карта New Horizons · неполное покрытие';}const photo=missionPhoto(entry.officialName||entry.key||entry.name);if(photo){$('#details').querySelector('p.fine:last-child')?.remove();$('#details').insertAdjacentHTML('beforeend',photo);}$('#details').insertAdjacentHTML('beforeend','<p class="measured-size">'+(measure?.radiusKm?'Радиус: '+fmt(measure.radiusKm)+' км. Камера приближена для осмотра; масштаб модели 1000 км/единицу.':'Размер неизвестен; нейтральная схема не является моделью измеренного размера.')+'</p>');$('#details').scrollTop=0;controls.minDistance=Math.max(.00001,physicalRadius*1.6);fly(new THREE.Vector3(0,physicalRadius*1.4,physicalRadius*4.8));
 }
 
+function upgradeMoonMesh(body,name,unitsPerKm,group){
+ const pending=loadMoonShape(name);
+ if(!pending)return;
+ pending.then(()=>{
+  if(body.parent!==group||!group.parent)return;
+  const shape=moonShapeGeometry(name,unitsPerKm);
+  if(!shape)return;
+  releaseMoonIllustration(body);
+  body.geometry.dispose();
+  body.geometry=shape;
+  body.scale.set(1,1,1);
+ }).catch(error=>console.warn('Форма спутника '+name,error));
+}
+
 function updateMoons(){moonObjects.forEach(obj=>{const d=obj.userData,a=d.phase+simDays*d.speed*.12;obj.position.set(Math.cos(a)*d.orbit,Math.sin(a)*d.orbit*Math.sin(d.inc),Math.sin(a)*d.orbit*Math.cos(d.inc));});}
 function syncMoonsVisibility(){if(mode==='dwarf'){dwarfSystem.setMoonsVisible(state.moons);return;}if(moonGroup)moonGroup.visible=state.moons;pickables=mode==='planet'?[focusPlanet,...(state.moons?moonObjects:[])]:[...planetObjects,overviewGroup.userData.sun];if(!state.moons&&selectedMoon)resetCamera();}
 function setPaused(value){paused=value;$('#pause').textContent=value?'▶':'Ⅱ';$('#pause').setAttribute('aria-label',value?'Продолжить движение':'Приостановить движение');$('#pause').title=value?'Продолжить · Пробел':'Пауза · Пробел';}
-function render(now){requestAnimationFrame(render);const delta=Math.min((now-previousTime)/1000,.05);previousTime=now;if(missionScene){missionScene.draw(delta);return;}if(!paused){simDays+=delta*speed;const visualDelta=delta*Math.sqrt(speed);planetObjects.forEach(body=>{body.userData.mesh.rotation.y+=visualDelta*.09;});if(focusPlanet&&mode==='planet'){focusPlanet.userData.mesh.rotation.y+=visualDelta*.045*(selectedPlanet.id==='venus'||selectedPlanet.id==='uranus'?-1:1);if(focusPlanet.userData.clouds)focusPlanet.userData.clouds.rotation.y+=visualDelta*.052;}overviewGroup.userData.sun.rotation.y+=visualDelta*.02;}
- planetObjects.forEach(body=>{const d=body.userData,p=d.planet,a=d.phase+simDays/p.period*Math.PI*2;const orbit=realScale?planetKm[PLANETS.indexOf(p)]/overviewUnitKm:p.orbit;body.position.set(Math.cos(a)*orbit,0,Math.sin(a)*orbit);});if(mode==='planet')updateMoons();if(mode==='dwarf')dwarfSystem.update(simDays);if(overviewGroup.visible&&frame%3===0){const {asteroid,kuiper}=overviewGroup.userData.belts;for(const [id,belt] of Object.entries({asteroid,kuiper}))if(belt.visible)belt.userData.update(simDays,mode===id&&follow===belt.userData.inspectTarget);}
- if(transition){if(follow){const move=follow.position.clone().sub(previousFollow);transition.to.add(move);transition.targetTo.add(move);}const t=Math.min((now-transition.start)/1100,1),e=1-Math.pow(1-t,3);camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.targetFrom,transition.targetTo,e);if(t===1)transition=null;}else if(follow){const move=follow.position.clone().sub(previousFollow);camera.position.add(move);controls.target.add(move);}if(follow)previousFollow.copy(follow.position);controls.autoRotate=autoOrbit&&!transition;controls.autoRotateSpeed=.35;controls.update();const near=inspectionNear(camera.position.distanceTo(controls.target));renderDepthRange(renderer,scene,camera,near,ATLAS_FAR,{ratioLimit:ATLAS_DEPTH_RATIO});
+function updatePlanetLOD(){
+ const scale=renderer.domElement.clientHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
+ for(const body of planetObjects){
+  const {lod,mesh,radius}=body.userData;
+  if(!body.visible)continue;
+  const distance=body.getWorldPosition(lodPosition).distanceTo(camera.position);
+  const pixels=radius*scale/Math.max(radius,distance);
+  let level=lod.level;
+  if(level===0&&pixels>24)level=pixels>90?2:1;
+  else if(level===1&&pixels>90)level=2;
+  else if(level===1&&pixels<18)level=0;
+  else if(level===2&&pixels<68)level=pixels<18?0:1;
+  if(level!==lod.level){
+   lod.geometries[level]??=new THREE.SphereGeometry(radius,...sphereLevels[level]);
+   mesh.geometry=lod.geometries[level];
+   lod.level=level;
+  }
+ }
+}
+
+function scheduleDraw(){
+ if(drawRequest||document.hidden)return;
+ drawRequest=requestAnimationFrame(now=>{
+  drawRequest=0;
+  render(now);
+  scheduleDraw();
+ });
+}
+function render(now){
+ const frameMs=now-previousTime;
+ const delta=Math.min(frameMs/1000,.05);
+ previousTime=now;
+ if(viewerActive()&&!missionScene)return;
+ if(missionScene){
+  if(missionScene.draw(delta))graphics.record(renderer,performance.now(),missionScene.label,!missionScene.capped);
+  return;
+ }
+ graphics.begin();
+ if(!paused){simDays+=delta*speed;const visualDelta=delta*Math.sqrt(speed);if(overviewGroup.visible)planetObjects.forEach(body=>{body.userData.mesh.rotation.y+=visualDelta*.09;});if(focusPlanet&&mode==='planet'){focusPlanet.userData.mesh.rotation.y+=visualDelta*.045*(selectedPlanet.id==='venus'||selectedPlanet.id==='uranus'?-1:1);if(focusPlanet.userData.clouds)focusPlanet.userData.clouds.rotation.y+=visualDelta*.052;}overviewGroup.userData.sun.rotation.y+=visualDelta*.02;}
+ const updatePositions=simDays!==lastSimDays||mode!==lastMode||focusPlanet!==lastFocus;
+ if(updatePositions){
+  if(overviewGroup.visible)planetObjects.forEach(body=>{const d=body.userData,p=d.planet,a=d.phase+simDays/p.period*Math.PI*2;const orbit=realScale?planetKm[PLANETS.indexOf(p)]/overviewUnitKm:p.orbit;body.position.set(Math.cos(a)*orbit,0,Math.sin(a)*orbit);});
+  if(mode==='planet')updateMoons();
+  if(mode==='dwarf')dwarfSystem.update(simDays);
+  lastSimDays=simDays;lastMode=mode;lastFocus=focusPlanet;
+ }
+ if(overviewGroup.visible&&frame%3===0){const {asteroid,kuiper}=overviewGroup.userData.belts;for(const [id,belt] of Object.entries({asteroid,kuiper}))if(belt.visible)belt.userData.update(simDays,mode===id&&follow===belt.userData.inspectTarget);}
+ if(transition){if(follow){const move=follow.position.clone().sub(previousFollow);transition.to.add(move);transition.targetTo.add(move);}const t=Math.min((now-transition.start)/1100,1),e=1-Math.pow(1-t,3);camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.targetFrom,transition.targetTo,e);if(t===1)transition=null;}else if(follow){const move=follow.position.clone().sub(previousFollow);camera.position.add(move);controls.target.add(move);}if(follow)previousFollow.copy(follow.position);controls.autoRotate=autoOrbit&&!transition;controls.autoRotateSpeed=.35;controls.update();if(overviewGroup.visible&&frame%6===0)updatePlanetLOD();const near=inspectionNear(camera.position.distanceTo(controls.target));renderDepthRange(renderer,scene,camera,near,ATLAS_FAR,{ratioLimit:ATLAS_DEPTH_RATIO});
+ graphics.record(renderer,performance.now());
  if(frame++%2===0){const w=renderer.domElement.clientWidth,h=renderer.domElement.clientHeight;labels.forEach(({object,el})=>{let visible=state.labels&&!cinematic;if(mode==='overview'&&viewingSun&&object!==overviewGroup.userData.sun)visible=false;if(mode==='planet'&&object!==focusPlanet&&!state.moons)visible=false;object.getWorldPosition(temp);if(mode==='planet'&&object!==focusPlanet){const toward=temp.clone().sub(camera.position);const t=-camera.position.dot(toward)/toward.lengthSq();if(t>0&&t<1&&camera.position.clone().addScaledVector(toward,t).length()<3.3)visible=false;}const dist=temp.distanceTo(camera.position);temp.project(camera);if(temp.z>1||temp.z< -1||Math.abs(temp.x)>1.1||Math.abs(temp.y)>1.1)visible=false;if(follow&&object!==follow&&dist<2)visible=false;el.style.display=visible?'block':'none';if(visible){el.style.left=(temp.x*.5+.5)*w+'px';el.style.top=(-temp.y*.5+.5)*h+Math.max(18,object.userData.radius?object.userData.radius/dist*h/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))+12:18)+'px';}});}
 }
 function bindUI(){
@@ -356,7 +435,33 @@ function applySeason(){
  $('#season-note').textContent=note;
 }
 
-async function start(){try{const shapesReady=loadMoonShapes();realScale=location.hash!=='#illustrative';moonSizes=await fetch('./moon-sizes.json').then(r=>r.json());orbitalData=(await (await fetch('./orbit-distances.json')).json()).elements;const response=await fetch('./moons-catalog.json');if(!response.ok)throw new Error('Не удалось загрузить каталог спутников');catalog=await response.json();await shapesReady;initScene();dwarfSystem=createDwarfSystem({scene,camera,controls,details:$('#details'),fly,title,texture,photo:missionPhoto,catalog:showCatalogBody,measure:moonMeasure,installLight:root=>installInspectionLight(root,inspectionLight),enter:id=>{mode='dwarf';setSelected(id);pickables=[];seasonLight.position.copy(lightDirection);selectedPlanet=null;selectedMoon=null;overviewGroup.visible=false;focusGroup.visible=false;disposeFocus();follow=null;}});await dwarfSystem.mount();bindUI();mountQuickTools();connectMissionAtlas({
+export async function start({step,signal}) {
+ step('Читаем каталог и орбитальные данные…');
+ realScale=location.hash!=='#illustrative';
+ const [sizes,orbits,planetary]=await Promise.all([
+  readJSON('./moon-sizes.json',signal),readJSON('./orbit-distances.json',signal),readJSON('./moons-catalog.json',signal)
+ ]);
+ signal.throwIfAborted();
+ moonSizes=sizes;
+ orbitalData=orbits.elements;
+ catalog=planetary;
+ step('Создаём сцену WebGL…');
+ try {
+  initScene();
+ } catch(error) {
+  throw new Error('Не удалось создать сцену WebGL: '+error.message,{cause:error});
+ }
+ dwarfSystem=createDwarfSystem({scene,camera,controls,details:$('#details'),fly,title,texture,photo:missionPhoto,catalog:showCatalogBody,measure:moonMeasure,installLight:root=>installInspectionLight(root,inspectionLight),enter:id=>{lastMode=null;mode='dwarf';setSelected(id);pickables=[];seasonLight.position.copy(lightDirection);selectedPlanet=null;selectedMoon=null;overviewGroup.visible=false;focusGroup.visible=false;disposeFocus();follow=null;}});const dwarfReady=dwarfSystem.mount().catch(error=>{
+  console.warn('Раздел карликовых планет',error);
+  $('#object-panel-dwarfs').textContent='Каталог не загрузился. Обновите страницу, чтобы повторить.';
+ });
+ graphics=mountGraphics(renderer,()=>missionScene?'Полёт аппарата':$('#scene-title').textContent,density=>{
+  for(const belt of Object.values(overviewGroup.userData.belts))belt.userData.setDensity?.(density);
+  resize();
+ });
+ for(const belt of Object.values(overviewGroup.userData.belts))belt.userData.setDensity?.(graphics.particles());
+ resize();
+ bindUI();mountQuickTools();connectMissionAtlas({
  renderer,stage:$('#stage'),texture,planets:PLANETS,
  createEarth:radius=>makePlanet(PLANETS.find(planet=>planet.id==='earth'),radius),
  pause(value){setPaused(value);},get paused(){return paused;},
@@ -364,8 +469,39 @@ async function start(){try{const shapesReady=loadMoonShapes();realScale=location
  setSpeed(index){const slider=$('#speed');slider.value=index;slider.dispatchEvent(new Event('input'));},
  mount(view){controls.enabled=false;missionScene=view;document.body.classList.add('voyager-flight');},
  unmount(view){if(missionScene!==view)return;missionScene=null;controls.enabled=true;document.body.classList.remove('voyager-flight');}
- });mountFullCatalog(entry=>{if(entry.planet){showPlanet(entry.planet);selectMoon(entry.key);}else showCatalogBody(entry);});showOverview(true);if(reducedMotion)setPaused(true);$('#catalog-total').textContent=Object.values(catalog.planets).flat().length;$('#loading').hidden=true;requestAnimationFrame(render);}catch(error){console.error(error);$('#loading').innerHTML=`<p>Не удалось открыть 3D-модель.</p><p class="fine">${escape(error.message)}</p><button class="cta" onclick="location.reload()">Попробовать снова</button>`;}}
-start();
+ });
+ const dwarfs=await dwarfReady;
+ mountObjectTree(catalog,dwarfs||[],{
+  planetMoon(id,key){showPlanet(id);selectMoon(key);},
+  dwarfMoon(id,index){dwarfSystem.show(id);document.querySelectorAll('#dwarf-moons .moon-row')[index]?.click();}
+ });
+ mountFullCatalog(catalog,entry=>{if(entry.planet){showPlanet(entry.planet);selectMoon(entry.key);}else showCatalogBody(entry);});
+ step('Рисуем первый кадр…');
+ showOverview(true);
+ if(reducedMotion)setPaused(true);
+ $('#catalog-total').textContent=Object.values(catalog.planets).flat().length;
+ await new Promise((resolve,reject)=>requestAnimationFrame(now=>{
+  if(signal.aborted){reject(signal.reason);return;}
+  try {
+   previousTime=now;
+   render(now);
+   document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){
+     cancelAnimationFrame(drawRequest);
+     drawRequest=0;
+    }else{
+     previousTime=performance.now();
+     scheduleDraw();
+    }
+   });
+   scheduleDraw();
+   resolve();
+  } catch(error) {
+   reject(error);
+  }
+ }));
+ return renderer.domElement;
+}
 
 function mountQuickTools(){
  const dock=document.createElement('div');dock.className='quick-tools';dock.setAttribute('aria-label','Управление осмотром');

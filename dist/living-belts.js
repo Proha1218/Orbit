@@ -132,7 +132,14 @@ export function livingBelt({inner,outer,count,kind}){
  group.userData.meanRadius=(inner+outer)/2;
  group.userData.outerRadius=outer;
 
- let lastParticleDay=NaN;
+ let lastParticleDay=NaN,activeCount=count;
+ group.userData.setDensity=fraction=>{
+  const next=Math.max(1,Math.floor(count*fraction));
+  if(next===activeCount)return;
+  activeCount=next;
+  geometry.setDrawRange(0,activeCount);
+  lastParticleDay=NaN;
+ };
  group.userData.update=(days,close)=>{
   hero.visible=close;
   if(close&&!sample){
@@ -145,7 +152,7 @@ export function livingBelt({inner,outer,count,kind}){
    hero.add(sample);
   }
   if(days!==lastParticleDay){
-   for(let i=0;i<orbits.length;i++){
+   for(let i=0;i<activeCount;i++){
     const o=orbits[i],phase=o.phase+days*o.rate;
     const x=o.a*Math.cos(phase),z=o.a*Math.sin(phase);
     position[i*3]=x*o.cosNode-z*o.cosInc*o.sinNode;
@@ -153,6 +160,8 @@ export function livingBelt({inner,outer,count,kind}){
     position[i*3+2]=x*o.sinNode+z*o.cosInc*o.cosNode;
    }
    hero.position.fromArray(position);
+   geometry.attributes.position.clearUpdateRanges();
+   geometry.attributes.position.addUpdateRange(0,activeCount*3);
    geometry.attributes.position.needsUpdate=true;
    lastParticleDay=days;
   }

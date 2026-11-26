@@ -1,10 +1,10 @@
+import {refreshModelProfile} from '../graphics.js';
 import {renderDepthRange} from '../camera-depth.js';
 import * as T from '../vendor/three.module.js';
 import {OrbitControls} from '../vendor/OrbitControls.js';
 import {planetRings,RING_NOTES} from '../planet-rings.js';
 import {MOON_MAPS,partialCoverage} from '../moon-maps.js';
-import {GLTFLoader} from '../vendor/loaders/GLTFLoader.js';
-import {disposeModel} from './viewer.js';
+import {disposeModel,loadSpacecraftModel} from './viewer.js';
 import {missionAtlas} from './bridge.js';
 import {AU,C,fromEcliptic,loadEphemeris,utcText} from './ephemeris.js';
 import {eventById,events} from './history-data.js';
@@ -109,7 +109,7 @@ function createFlight(atlas,item,eph,options,onClose) {
   const body=new T.Group();
   const map=MOON_MAPS[id], texture=data?.texture??(id==='Titan'?null:map?.texture);
   const color=id==='Titan'?0xd2a667:texture?0xffffff:0x90969d;
-  const material=new T.MeshStandardMaterial({color,map:texture?atlas.texture(texture):null,roughness:1});
+  const material=new T.MeshStandardMaterial({color,map:texture&&!parent?atlas.texture(texture):null,roughness:1});
   if(map?.partial&&texture)partialCoverage(material);
   const surface=new T.Mesh(new T.SphereGeometry(radius/UNIT,parent?32:64,parent?20:40),material);
   const axes=meta.planetAxesKm?.[center];
@@ -131,7 +131,7 @@ function createFlight(atlas,item,eph,options,onClose) {
   const label=document.createElement('span');
   label.textContent=data?.name??name;
   labels.append(label);
-  return {id,center,bary,body,surface,label,radius,ringLights,rings,tilt,parent,color};
+  return {id,center,bary,body,surface,label,radius,ringLights,rings,tilt,parent,color,texture};
  });
  const bodiesByCenter=new Map(planets.map(body=>[body.center,body]));
  function orient(body,time){
@@ -221,10 +221,8 @@ function createFlight(atlas,item,eph,options,onClose) {
   time=clamp(value,meta.begin,meta.end);
  }
  function loadModel() {
-  fetch(item.model,{signal}).then(r=>{
-   if(!r.ok)throw Error('Модель недоступна');
-   return r.arrayBuffer();
-  }).then(bytes=>new GLTFLoader().parseAsync(bytes,new URL('.',item.model).href)).then(gltf=>{
+  loadSpacecraftModel(item.model,false,signal).then(gltf=>{
+   if(!gltf)return;
    if(signal.aborted){disposeModel(gltf.scene);return;}
    model=gltf.scene;
    const bounds=new T.Box3().setFromObject(model,true);
@@ -241,7 +239,10 @@ function createFlight(atlas,item,eph,options,onClose) {
   const physical=get('[data-scale]').value==='real';
   craft.scale.setScalar((physical?1:4000)/(1000*UNIT));
  }
+ let lastPositionTime=NaN;
  function updatePositions() {
+  if(time===lastPositionTime)return !!flightState;
+  lastPositionTime=time;
   segment=eph.segmentAt(time);
   flightState=eph.sample(segment,time);
   if(!flightState)return false;
@@ -254,6 +255,10 @@ function createFlight(atlas,item,eph,options,onClose) {
    p.relative=s&&new T.Vector3(...localRoutePoint(s.p,flightState.p));
    p.body.visible=!!s;
    if(s){
+    if(p.parent&&p.texture&&!p.surface.material.map){
+     p.surface.material.map=atlas.texture(p.texture);
+     p.surface.material.needsUpdate=true;
+    }
     p.body.position.copy(p.relative);
     orient(p,time);
     for(const light of p.ringLights)light.copy(p.position).negate().normalize();
@@ -410,11 +415,14 @@ function createFlight(atlas,item,eph,options,onClose) {
   route.dispose();
   sky.geometry.dispose();
   sky.material.dispose();
-  if(model)disposeModel(model);
+  if(model){craft.remove(model);disposeModel(model);model=null;}
+  scene.clear();
+  renderer.renderLists.dispose();
   onClose();
   if(where==='history')item.reopen('history',selected,time);
  }
  const api={
+  label:'Voyager 2 · '+(options.follow?'Сопровождение':'Траектория'),
   draw(dt) {
    if(!atlas.paused) {
     const rate=atlas.speed*86400*(flyby?replayFactor:1);
@@ -450,6 +458,8 @@ function createFlight(atlas,item,eph,options,onClose) {
    const wide=cameraDistance>=AU/UNIT;
    distantRoute.position.copy(track).negate();
    route.update({segment,state:flightState,time,overview:wide,visible:lines,cameraDistance:Math.max(cameraDistance,camera.position.length())});
+   refreshModelProfile(model);
+   renderer.info.reset();
    renderDepthRange(renderer,scene,camera,near,far,{background:sky});
 
    const shipVisible=!!model&&closeView();
@@ -465,6 +475,7 @@ function createFlight(atlas,item,eph,options,onClose) {
    if(lastUI===0||countdown>=.16){
     display();lastUI=1;countdown=0;
    }
+   return true;
   },
   close
  };
@@ -492,7 +503,7 @@ function createFlight(atlas,item,eph,options,onClose) {
   if(e.target.closest('button:not([data-object-tab])'))close();
  },{signal,capture:true});
  document.querySelector('.topbar').addEventListener('click',e=>{
-  if(e.target.closest('button'))close();
+  if(e.target.closest('button:not(#graphics-open)'))close();
  },{signal,capture:true});
  atlas.mount(api);
  resize();

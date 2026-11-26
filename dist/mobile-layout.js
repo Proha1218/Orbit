@@ -28,7 +28,7 @@ for (const button of buttons) {
  });
 }
 document.querySelector('#object-navigation').addEventListener('click', event => {
- if (mobile.matches && event.target.closest('button:not([data-object-tab])')) setPanel('', true);
+ if (mobile.matches && event.target.closest('button:not([data-tree-toggle])')) setPanel('', true);
 });
 document.querySelector('#details').addEventListener('click', event => {
  if (mobile.matches && event.target.closest('.moon-row, #start-earth, #back-planet, [data-belt-view]')) setPanel('', true);

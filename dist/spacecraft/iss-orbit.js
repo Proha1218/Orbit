@@ -1,3 +1,4 @@
+import {resourceSignal} from '../load-resource.js';
 export const OEM_SOURCE='https://nasa-public-data.s3.amazonaws.com/iss-coords/current/ISS_OEM/ISS.OEM_J2K_EPH.txt';
 export function parseOEM(text){
  if(!/REF_FRAME\s*=\s*EME2000\b/.test(text)||!/TIME_SYSTEM\s*=\s*UTC\b/.test(text)||
@@ -38,6 +39,7 @@ export function earthPoint(p,t){
  return {lat:lat/rad,lon:((lon+180)%360+360)%360-180,height};
 }
 export async function readISSOrbit(signal, refresh=false){
+ signal=resourceSignal(signal,20000);
  const cacheKey='orbita-nasa-iss-oem';
  if(refresh){
   const response=await fetch(OEM_SOURCE,{cache:'no-store',signal});

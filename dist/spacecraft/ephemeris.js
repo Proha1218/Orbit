@@ -1,11 +1,13 @@
+import {resourceSignal} from '../load-resource.js';
 const stride = 7;
 export const AU = 149597870.7;
 export const C = 299792.458;
 export const fromEcliptic = ([x,y,z]) => [x,z,-y];
 
 export async function loadEphemeris(signal) {
+ const deadline=resourceSignal(signal,30000);
  const responses = await Promise.all(['voyager-states.json','voyager-states.bin'].map(
-  name=>fetch(new URL('./data/'+name,import.meta.url),{signal})));
+  name=>fetch(new URL('./data/'+name,import.meta.url),{signal:deadline})));
  if (responses.some(r=>!r.ok)) throw Error('Локальные файлы эфемерид недоступны.');
  const [meta, bytes]=await Promise.all([responses[0].json(),responses[1].arrayBuffer()]);
  const states = new Float64Array(bytes);
